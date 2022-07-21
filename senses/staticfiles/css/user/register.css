@@ -1,0 +1,212 @@
+/*////////////////////////////////////
+[For mobile phones]*/
+.register-wrapper{
+    margin:auto;
+    border-top:10px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 20px #AAAAAA;
+    background-color: #FFFFFF;
+    width:340px;
+    min-height:500px;
+}
+
+.register-form{
+    width:85%;
+    margin:auto;
+}
+
+.register-title{
+    background-color: #fdb338;
+    color:#FFFFFF;
+    text-align:center;
+    font-size: 18px;
+    font-weight: 400;
+    padding: 7px;
+    border-radius: 10px 10px 0 0;
+    margin:15px 0 10px 0;
+}
+
+.register-welcometext{
+    color: #757575 ;
+    text-align:center;
+    font-size: 14px;
+}
+
+.email, .password1, .password2{
+    color: #757575 ;
+    font-size: 14px;
+}
+
+.input{
+    border-radius: 3px;
+    border:1px solid   #757575  ;
+    margin:10px 0 10px 0;
+    width:100%;
+    padding:7px 10px;
+}
+
+.input:focus{
+    border-color:#fdb338 ;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 2px #fdb338;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 2px #fdb338;
+}
+
+.submit-button{
+    margin:10px 0;
+    border:0;
+    border-radius: 3px;
+    background-color: #015096;
+    width:110px;
+    height:36px;
+    color: #fcfefb;
+    font-size: 14px;
+    cursor: pointer;
+    transform: translate(90px, 0);
+}
+
+.submit-button:hover{
+    background-color: rgb(1, 60, 108);;
+}
+
+.alert.alert-success{
+    color:#015096;
+    text-align: center;
+}
+
+.alert.alert-danger{
+    color:red;
+    text-align: center;
+}
+
+form a:link{
+    width: 100%;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+    color:#757575
+}
+
+form a:hover{
+    text-decoration: underline;
+    color:#015096;
+}
+
+.botnav-bot-layer{
+    position: fixed;
+    bottom: 0px;
+    height:60px;
+    width:100%;
+    z-index: 2;
+    background-color: #000000;
+}
+
+.botnav-select-indicator{
+    position: fixed;
+    bottom: 0px;
+    height: 63px;
+    width: 15%;
+    background-color: #fdb338 ;
+    z-index: 2;
+    transform:translate(452%, 0)
+}
+
+.bot-navbar-mobile{
+    display:grid;
+    grid-template-columns: 16.7% 16.7% 16.7% 16.7% 16.7% 16.7% ;
+    justify-items: center;
+    position:fixed;
+    bottom: 0px;
+    width:100%;
+    height:60px;
+    z-index: 3;
+}
+
+.bot-navbar-mobile img{
+    width:102%;
+}
+
+.bot-navbar-mobile img[src*="helps"]{
+    transform: translate(0, 0.3px);
+}
+
+/*////////////////////////////////////
+[For Mobile min-width:401px]*/
+@media screen and (min-width: 410px){
+    .botnav-bot-layer{
+        height: 70px;
+    }
+
+    .botnav-select-indicator{
+        height: 73px;
+    }
+
+    .bot-navbar-mobile{
+        height: 70px;   
+    }
+}
+
+/*////////////////////////////////////
+[For Mobile min-width:451px]*/
+@media screen and (min-width: 451px){
+    .botnav-bot-layer{
+        height: 75px;
+    }
+
+    .botnav-select-indicator{
+        height: 78px;
+    }
+
+    .bot-navbar-mobile{
+        height: 75px;   
+    }
+}
+
+/*////////////////////////////////////
+[For Tablet]*/
+@media screen and (min-width: 501px){
+    .botnav-bot-layer{
+        height: 80px;
+        transform: translate(-50%, 0);
+        left: 50%;
+        width:480px;
+        margin:auto;
+        border-radius: 5px;
+
+    }
+
+    .botnav-select-indicator{
+        display:none;
+    }
+
+    .bot-navbar-mobile{
+        height: 80px;   
+        margin:auto;
+        justify-content:center;
+        transform: translate(-50%, 0);
+        left: 50%;
+        width:480px;
+        border-radius: 10px;
+        border:2px solid #000000
+    }
+}
+
+/*////////////////////////////////////
+[For PC]*/
+@media screen and (min-width: 1201px){
+    .botnav-bot-layer, .botnav-select-indicator, .bot-navbar-mobile{
+        display:none;
+    }
+
+    .register-wrapper{
+        width:540px;
+    }
+
+    .register-title{
+        margin:55px 0 10px 0;
+    }
+
+    .submit-button{
+        transform: translate(175px, 0);
+    }
+}

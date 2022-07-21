@@ -1,0 +1,50 @@
+{% extends 'master.html' %}
+
+{% load static %}
+
+{% block titleblock %}
+    <title>{{sitename}} | {{username}}</title>
+{% endblock %}
+{% block linkblock%}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/user/profile.css' %}">
+{% endblock %}
+
+
+{% block mainblock %}
+    <div class="wrapper">
+        <div class="personal-info"></div>
+        <div class="personal-stories-block">
+            <div class="stories-add-block">
+                <div class="stories-addblock-button">分享故事</div>
+                <div class="stories-addblock-fadein-content">
+                    <a href="/stories/add" class="stories-addblock-photo"><div><i class="fa-solid fa-image"></i></div></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Blank padding-->
+    <div style="height:80px;"></div>
+
+    <!--Botnav-Bot-Layer-->
+    <div class="botnav-bot-layer"></div>
+
+    <!--Bot-Nav-Select-Indicator-->
+    <div class="botnav-select-indicator"></div>
+
+    <!-- Bot-Nav-Mobile -->
+    <div class="bot-navbar-mobile">
+        <a href="/"><img src="{% static 'images/icons/home.png' %}"/></a>
+        <a class="navStoryBtn" href="/stories"><img src="{% static 'images/icons/stories.png' %}"/></a>
+        <a class="navHelpsBtn" href="/helps"><img src="{% static 'images/icons/helps.png' %}"/></a>
+        <a class="navExchangeBtn" href="/exchange"><img src="{% static 'images/icons/exchange.png' %}"/></a>
+        <a class="navProfileBtn" href="{% url 'login' %}"><img src="{% static 'images/icons/profile.png' %}"/></a>
+        <a class="navSettingBtn" href="/setting"><img src="{% static 'images/icons/setting.png' %}"/></a>
+    </div>
+
+{% endblock %}
+
+{% block jsblock %}
+    <script src="{% static 'js/user/user.js' %}"></script>
+
+{% endblock %}

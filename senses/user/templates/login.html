@@ -1,0 +1,51 @@
+{% extends 'master.html' %}
+
+{% load static %}
+
+{% block titleblock %}
+<title>{{sitename}} | 登入</title>
+{% endblock %}
+{% block linkblock %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/user/login.css' %}">
+{% endblock %}
+
+
+{% block mainblock %}
+    <div class="login-wrapper">
+        <p class="login-title">登入</p>
+        <p class="login-welcometext">讓善的感受時時刻刻</p>
+        <div class="login-form">
+            {% csrf_token %}
+            <label class="email" for="email">電子信箱</label><br/>
+            <input class="emailInput" type="email" id="email" name="email" placeholder="example@email.com" /><br/>
+            <label class="password1" for="password1">密碼</label><br/>
+            <input class="passwordInput" type="password" id="password1" name="password1" placeholder="8位數以上英文數字組合" /><br/>
+            <button class="submit-button" type="submit">登入</button>
+            <a href="/user/register">還沒有帳號？點我註冊</a>
+        </div>
+    </div>
+
+    <!--Blank padding-->
+    <div style="height:80px;"></div>
+
+    <!--Botnav-Bot-Layer-->
+    <div class="botnav-bot-layer"></div>
+
+    <!--Bot-Nav-Select-Indicator-->
+    <div class="botnav-select-indicator"></div>
+
+    <!-- Bot-Nav-Mobile -->
+    <div class="bot-navbar-mobile">
+        <a href="/"><img src="{% static 'images/icons/home.png' %}"/></a>
+        <a class="navStoryBtn" href="/stories"><img src="{% static 'images/icons/stories.png' %}"/></a>
+        <a class="navHelpsBtn" href="/helps"><img src="{% static 'images/icons/helps.png' %}"/></a>
+        <a class="navExchangeBtn" href="/exchange"><img src="{% static 'images/icons/exchange.png' %}"/></a>
+        <a class="navProfileBtn" href="{% url 'login' %}"><img src="{% static 'images/icons/profile.png' %}"/></a>
+        <a class="navSettingBtn" href="/setting"><img src="{% static 'images/icons/setting.png' %}"/></a>
+    </div>
+
+{% endblock  %}
+
+{% block jsblock %}
+    <script src="{% static 'js/user/user.js' %}"></script>
+{% endblock %}

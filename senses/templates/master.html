@@ -1,0 +1,64 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    {% block titleblock %}
+    {% endblock %}
+	<meta name="day trip" content="taipei attractions recommendation">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/icons/favicon.io' %}">
+    {% block linkblock%}
+    {% endblock %}
+</head>
+<body>
+    <div class="overlay"></div>
+    <!--Blank padding-->
+    <div style="height:50px;"></div>
+
+    <!--Top-Nav-->
+    <div class="top-navbar">
+        <!--Mobile-->
+        <div class="top-navbar-mobile">
+            <a href="/"><img src="{% static 'images/logo/logo_1_black.png' %}"/></a>
+            <div class="right-content-mobile">
+                <a class="navSearchBtn" href="/search"><img src="{% static 'images/icons/search.png' %}"/></a>
+                <a class="navMessageBtn" href="/message"><img src="{% static 'images/icons/message.png' %}"></a>
+            </div>
+        </div>
+        <!--PC-->
+        <div class="top-navbar-pc">
+            <a href="/"><img src="{% static 'images/logo/logo_1_black.png' %}"/></a>
+            <img class="search-icon" src="{% static 'images/icons/search_before.png' %}"/>
+            <input class="search-bar" type="text" name="search" placeholder="搜尋更多善的時刻" />
+            <div class="right-content-pc">
+                <a class="navStoryBtn" href="{% url 'stories' %}"><img src="{% static 'images/icons/stories_pc.png' %}"/><p>傾聽故事</p></a>
+                <a class="navHelpsBtn" href=""><img src="{% static 'images/icons/helps_pc.png' %}"/><p>伸出援手</p></a>
+                <a class="navExchangeBtn" href=""><img src="{% static 'images/icons/exchange_pc.png' %}"/><p>善點兌換</p></a>
+                <a class="navMessageBtn" href=""><img src="{% static 'images/icons/message_pc.png' %}"><p>訊息</p></a>
+                <a class="navProfileBtn" href="{% url 'login' %}"><img src="{% static 'images/icons/profile_pc.png' %}"/><p>個人檔案</p></a>
+                <a class="navSettingBtn href=""><img src="{% static 'images/icons/setting_pc.png' %}"/><p>設定</p></a>
+            </div>
+        </div>        
+    </div>
+
+    {% block mainblock %}
+    {% endblock %}
+
+    <script src="{% static 'js/utils/getCurrentUsernameFromURL.js' %}"></script>
+    <script src="{% static 'js/utils/checkUserStatus.js' %}"></script>
+    <script src="{% static 'js/utils/redirectLoggedinUserToPersonalPage.js' %}"></script>
+    <script src="{% static 'js/user/profile.js' %}"></script>
+    <script src="{% static 'js/utils/search.js' %}"></script>
+    <script src="{% static 'js/utils/fadein.js' %}"></script>
+    <script src="{% static 'js/utils/close.js' %}"></script>
+
+    {% block jsblock%}
+    {% endblock%}
+</body>
+</html>

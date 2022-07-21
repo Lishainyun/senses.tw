@@ -1,0 +1,67 @@
+{% extends 'master.html' %}
+
+{% load static %}
+
+{% block titleblock %}
+<title>{{sitename}} | 故事牆</title>
+{% endblock %}
+{% block linkblock %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/story/story.css' %}">
+    <script src="https://kit.fontawesome.com/2b1fe198d1.js" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block mainblock %}
+    <!--main content-->
+    <div class="layout">
+        <div class="tags-block"></div>
+        <div class="stories-block">
+            <div class="stories-add-block">
+                <div class="stories-addblock-button">分享故事</div>
+                <div class="stories-addblock-fadein-block">
+                    <p class="fadein-block-title">分享故事</p>
+                    <p class="fadein-edit-title">編輯故事</p>
+                    <div class="fadein-block-close">X</div>
+                    <div class="fadein-block-form">
+                        <textarea class="form-text-content-input" id="form-text-content-input" name="form-text-content-input" placeholder="嗨!分享些什麼吧~"></textarea><br/>
+                        <div class="image-preview-wrapper"></div>
+                        <label class="form-image-content-label" for="form-image-content-input"><i class="fa-solid fa-image addblock" style="font-size: 18px"></i><div class="form-image-content-label-text">上傳相片</div></label>
+                        <input type="file" accept="image/*" class="form-image-content-input" id="form-image-content-input" name="form-image-content-input" multiple/>
+                        <div class="addblock-submit-button" type="submit">分享</div>
+                        <div class="fadein-edit-button" type="submit">編輯完成</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="info-block"></div>
+    </div>
+
+    <!--Blank padding-->
+    <div style="height:80px;"></div>
+
+    <!--Botnav-Bot-Layer-->
+    <div class="botnav-bot-layer"></div>
+
+    <!--Bot-Nav-Select-Indicator-->
+    <div class="botnav-select-indicator"></div>
+
+    <!-- Bot-Nav-Mobile -->
+    <div class="bot-navbar-mobile">
+        <a href="/"><img src="{% static 'images/icons/home.png' %}"/></a>
+        <a class="navStoryBtn" href="/stories"><img src="{% static 'images/icons/stories.png' %}"/></a>
+        <a class="navHelpsBtn" href="/helps"><img src="{% static 'images/icons/helps.png' %}"/></a>
+        <a class="navExchangeBtn" href="/exchange"><img src="{% static 'images/icons/exchange.png' %}"/></a>
+        <a class="navProfileBtn" href="{% url 'login' %}"><img src="{% static 'images/icons/profile.png' %}"/></a>
+        <a class="navSettingBtn" href="/setting"><img src="{% static 'images/icons/setting.png' %}"/></a>
+    </div>
+{% endblock %}
+
+{% block jsblock %}
+    <script src="{% static 'js/utils/story_loader.js' %}"></script>
+    <script src="{% static 'js/utils/story_imagePreview.js' %}"></script>
+    <script src="{% static 'js/story/comment.js' %}"></script>
+    <script src="{% static 'js/story/story.js' %}"></script>
+    <script src="{% static 'js/utils/autoResizeInputElement.js' %}"></script>
+    <script src="{% static 'js/utils/story_imagesSwiper.js' %}"></script>
+
+
+{% endblock %}

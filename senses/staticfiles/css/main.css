@@ -1,0 +1,169 @@
+/* global setting*/
+@font-face {
+    font-family: 'jf-openhuninn-1.1';
+    src:local("jf-openhuninn-1.1"),
+        url('../fonts/jf-openhuninn-1.1.woff2') format("woff2"),
+        url('../fonts/jf-openhuninn-1.1.ttf') format("opentype"),
+}
+
+*{
+	box-sizing: border-box;
+}
+
+body{
+	margin: 0;
+    font-family: 'jf-openhuninn-1.1', 'Poppins', sans-serif;
+    background-color: #b5b2b1;
+}
+
+/* .page-loading-animation{
+
+} */
+
+.top-navbar{
+    position: fixed;
+    width:100%;
+    height:50px;
+    margin:0px;
+    top:0px;
+    z-index: 1;
+    background-color:#FFFFFF ;
+    box-shadow: 0 0 1px rgba(0, 0, 0)
+}
+
+/*////////////////////////////////////
+[For mobile phones]*/
+
+/* top-navbar */
+.top-navbar-mobile{
+    width:95%;
+    height:50px;
+    margin:auto;
+    background-color:#FFFFFF ;
+}
+
+.top-navbar-pc{
+    display:none;
+}
+
+.right-content-mobile{
+    float:right;
+    margin: auto;
+    transform:translate(-3px, 15px);
+}
+
+img[src*="logo_new.png"]{
+    height:50px;
+    flex-grow:3;
+    transform:translate(-10px, 2px);
+}
+
+img[src*="search.png"], img[src*="message.png"]{
+    height:35px;
+    cursor:pointer;
+    transform:translate(0, -8px);
+
+}
+
+/*////////////////////////////////////
+[For PC]*/
+@media screen and (min-width: 1201px){
+
+    .top-navbar-mobile{
+        display:none;
+    }
+
+    .top-navbar-pc{
+        display:block;
+        width:1200px;
+        height:50px;
+        margin:auto;
+        background-color:#FFFFFF ;
+    }
+
+    /*///////////right-content-pc setting///////////////*/
+    .right-content-pc{
+        float:right;
+        height:25px;
+        transform: translate(0, 18px);
+    }
+
+    .right-content-pc a{
+        border-width: 0 0 0 0;
+        border-color: #FFFFFF;
+        transition:border-width, border-color 0.5s ;
+    }
+
+    .right-content-pc a:hover{
+        border-style: solid;
+        border-width: 0 0 3px 0;
+        border-color: #fdb338;
+    }
+
+    .right-content-pc img{
+        height:25px;
+        margin:0;
+        padding:0 6px 0 6px;
+        transform: translate(-4px, -5px);
+    }
+
+    .right-content-pc img[src*='exchange']{
+        height:20px;
+        transform: translate(-4px, -8px);
+    }
+
+    .right-content-pc img[src*='message']{
+        height:23px;
+        transform: translate(-4px, -6px);
+    }
+
+    .right-content-pc img[src*='profile']{
+        height:23px;
+        transform: translate(-4px, -6px);
+    }
+
+    .right-content-pc img[src*='setting']{
+        transform: translate(-4px, -4px);
+    }
+
+    .right-content-pc p{
+        display: inline-block;
+        margin:0;
+        transform: translate(-4px, -12px);
+        font-size:15px;
+        color:black;
+    }
+
+
+    /*///////////search icon setting///////////////*/
+    .search-icon{
+        position: fixed;
+        height:28px;
+        transform:translate(60px, 12px);
+        z-index: 2;
+    }
+
+    .search-icon.has-click{
+        transform:translate(430px, 12px);
+        cursor: pointer;
+        animation: click-search-icon 1s;
+    }
+
+    @keyframes click-search-icon {
+        from{
+            transform: translate(60px, 12px) rotate(0deg)
+        }
+        to{
+            transform: translate(430px, 12px) rotate(360deg)
+        }
+    }
+
+    .search-bar{
+        width:400px;
+        height:30px;
+        padding:0 0 0 30px;
+        border-radius: 40px;
+        transform: translate(60px, -20px);
+    }
+
+}
