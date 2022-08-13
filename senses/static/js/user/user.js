@@ -97,11 +97,13 @@ class User {
 
     async logoutUser(){
 
-        const logoutBtn = document.querySelector('.logout')
+        const logoutBtn = document.querySelectorAll('.logout')
                         
-        logoutBtn.addEventListener('click', ()=>{
-            localStorage.removeItem('token')
-            location.href = ""
+        logoutBtn.forEach(ele=>{
+            ele.addEventListener('click', ()=>{
+                localStorage.removeItem('token')
+                location.href = ""
+            })
         })
 
     }
@@ -167,77 +169,87 @@ if(passwordInputElements){
 [listener for login submit button] /////////// */
 const loginSubmitBtn = document.querySelector('.submit-button');
 
-if(loginSubmitBtn){
+function login(){
 
-    loginSubmitBtn.addEventListener('click',()=>{
+    let emailInputEle = document.querySelector('.emailInput');
+    let emailInputValue = document.querySelector('.emailInput').value;
 
-        let emailInputEle = document.querySelector('.emailInput');
-        let emailInputValue = document.querySelector('.emailInput').value;
+    let passwordInputEle = document.querySelector('.passwordInput');
+    let passwordInputValue = document.querySelector('.passwordInput').value;
 
-        let passwordInputEle = document.querySelector('.passwordInput');
-        let passwordInputValue = document.querySelector('.passwordInput').value;
+    let loginInputEles = [emailInputEle, passwordInputEle]
+    let errorInputEles = []
+    let errorMessage = {}
 
-        let loginInputEles = [emailInputEle, passwordInputEle]
-        let errorInputEles = []
-        let errorMessage = {}
+    const user = new User(emailInputValue, passwordInputValue);
 
-        const user = new User(emailInputValue, passwordInputValue);
+    // get specific label name
+    let loginInputLableEles = document.getElementsByTagName('label')
+    let labelName;
 
-        // get specific label name
-        let loginInputLableEles = document.getElementsByTagName('label')
-        let labelName;
+    const findLabelForSpecificInputName = (ele)=>{
 
-        const findLabelForSpecificInputName = (ele)=>{
+        Array.from(loginInputLableEles).forEach(label=>{
+            if(label.htmlFor === ele.name){
+                labelName = label.textContent
+            }
+        })       
 
-            Array.from(loginInputLableEles).forEach(label=>{
-                if(label.htmlFor === ele.name){
-                    labelName = label.textContent
-                }
-            })       
+    }
+    
+    // clean existed error messages before rendering new ones
+    let errorMessageEles = document.querySelectorAll('.error-message')
+    errorMessageEles.forEach(ele=>{
+        ele.remove()
+    })
 
-        }
-        
-        // clean existed error messages before rendering new ones
-        let errorMessageEles = document.querySelectorAll('.error-message')
-        errorMessageEles.forEach(ele=>{
-            ele.remove()
-        })
+    // check input validity
+    if(loginPage === 'login'){
+        loginInputEles.forEach(ele=>{
 
-        // check input validity
-        if(loginPage === 'login'){
-            loginInputEles.forEach(ele=>{
-
-                if(!ele.value){
+            if(!ele.value){
+                findLabelForSpecificInputName(ele)
+                errorMessage[`${ele.type}`] = "您尚未輸入" + labelName
+                errorInputEles.push(ele) 
+            } else{
+                if(ele.classList.contains('is-invalid')){
                     findLabelForSpecificInputName(ele)
-                    errorMessage[`${ele.type}`] = "您尚未輸入" + labelName
+                    errorMessage[`${ele.type}`] = "您輸入無效的" + labelName
                     errorInputEles.push(ele) 
-                } else{
-                    if(ele.classList.contains('is-invalid')){
-                        findLabelForSpecificInputName(ele)
-                        errorMessage[`${ele.type}`] = "您輸入無效的" + labelName
-                        errorInputEles.push(ele) 
-                    }
                 }
-
-            })
-        }
-
-        if(errorInputEles.length !==0){
-
-            // if errorMessageBeforeLoginBtn already exist, clear it.
-            let errorMessageBeforeLoginBtn = document.querySelector('.error-message-before-login-btn')
-
-            if(errorMessageBeforeLoginBtn){
-                errorMessageBeforeLoginBtn.innerHTML = ""
             }
 
-            user.renderErrorMessage(errorInputEles, errorMessage)
+        })
+    }
 
-        } else {
+    if(errorInputEles.length !==0){
 
-            user.loginUser()
+        // if errorMessageBeforeLoginBtn already exist, clear it.
+        let errorMessageBeforeLoginBtn = document.querySelector('.error-message-before-login-btn')
 
+        if(errorMessageBeforeLoginBtn){
+            errorMessageBeforeLoginBtn.innerHTML = ""
         }
 
-    });
+        user.renderErrorMessage(errorInputEles, errorMessage)
+
+    } else {
+
+        user.loginUser()
+
+    }
+}
+
+if(loginSubmitBtn){
+
+    loginSubmitBtn.addEventListener('click', login)
+    document.addEventListener('keyup', (e)=>{
+        
+        e.preventDefault()
+
+        if(e.key === 'Enter'){
+            login()
+        }
+    })
+
 }

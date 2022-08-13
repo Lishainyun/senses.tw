@@ -33,7 +33,11 @@
 body{
 	margin: 0;
     font-family: 'jf-openhuninn-1.1', 'Poppins', sans-serif;
-    background-color: #d6d6d6;
+    background-color: #e8e8e8;
+}
+
+a{
+    text-decoration: none;
 }
 
 /* .page-loading-animation{
@@ -54,10 +58,20 @@ body{
     animation: fadeIn 0.5s;
 }
 
+.status-off{
+    display: none;
+}
+
+.status-on{
+    display: block;
+
+}
+
 .top-navbar{
+    display: none;
     position: fixed;
     width:100%;
-    height:50px;
+    height:60px;
     margin:0px;
     top:0px;
     z-index: 999;
@@ -71,9 +85,9 @@ body{
 /* top-navbar */
 .top-navbar-mobile{
     width:95%;
-    height:50px;
+    height:60px;
     margin:auto;
-    background-color:#FFFFFF ;
+    display: flex;
 }
 
 .top-navbar-pc{
@@ -81,23 +95,78 @@ body{
 }
 
 .right-content-mobile{
-    float:right;
-    margin: auto;
-    transform:translate(-3px, 15px);
+    margin: auto;   
+    margin-right: 0px;
 }
 
 img[src*="logo_1_black.png"]{
-    height:50px;
-    flex-grow:3;
-    transform:translate(-10px, 2px);
+    height: 60px;
+    transform: translate(-15px, 2px);
+    flex: 1;
 }
 
-img[src*="search.png"], img[src*="message.png"]{
-    height:35px;
+img[src*="search.png"], img[src*="message.png"], img[src*="stories_new.png"]{
     cursor:pointer;
-    transform:translate(0, -8px);
+    transform: translate(0px, 2px);
+}
+
+img[src*="search.png"]{
+    width: 35px;
+    height: 35px;
+}
+
+img[src*="message.png"]{
+    width: 35px;
+    height: 35px;
+}
+
+img[src*="stories_new.png"]{
+    border-radius: 50%;
+    padding: 4px;
+    border: 2px solid #454545;
+    width: 35px;
+    height: 35px;
+    transform: translate(0px, 2px);
 
 }
+
+.navProfile{
+    width: 35px;
+    height: 35px;
+    display: inline-block;
+    border-radius: 50%;
+    transform: translate(0px, 2px);
+}
+
+.login{
+    display: inline-block;
+    width: 60px;
+    height: 40px;
+    background-color: #fdb338;
+    color: white;
+    cursor: pointer;
+    text-align: center;
+    line-height: 40px;
+    margin: auto 0;
+    border-radius: 5px;
+}
+
+.login:hover{
+    background-color: #feb846;
+}
+
+.register{
+    display: inline-block;
+    color: black;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.register:hover{
+    color: #fdb338;
+}
+
 
 /*////////////////////////////////////
 [For PC]*/
@@ -108,96 +177,60 @@ img[src*="search.png"], img[src*="message.png"]{
     }
 
     .top-navbar-pc{
-        display:block;
-        width:1200px;
-        height:50px;
-        margin:auto;
-        background-color:#FFFFFF ;
+        display: flex;
+        width: 900px;
+        height: 60px;
+        margin: auto;
+        justify-content: center;
     }
 
     /*///////////right-content-pc setting///////////////*/
     .right-content-pc{
-        float:right;
-        height:25px;
-        transform: translate(0, 18px);
+        flex: 1;
+        height: 60px;
     }
-
-    .right-content-pc a{
-        border-width: 0 0 0 0;
-        border-color: #FFFFFF;
-        transition:border-width, border-color 0.5s ;
-    }
-
-    .right-content-pc a:hover{
-        border-style: solid;
-        border-width: 0 0 3px 0;
-        border-color: #fdb338;
-    }
-
-    .right-content-pc img{
-        height:25px;
-        margin:0;
-        padding:0 6px 0 6px;
-        transform: translate(-4px, -5px);
-    }
-
-    .right-content-pc img[src*='exchange']{
-        height:20px;
-        transform: translate(-4px, -8px);
-    }
-
-    .right-content-pc img[src*='message']{
-        height:23px;
-        transform: translate(-4px, -6px);
-    }
-
-    .right-content-pc img[src*='profile']{
-        height:23px;
-        transform: translate(-4px, -6px);
-    }
-
-    .right-content-pc img[src*='setting']{
-        transform: translate(-4px, -4px);
-    }
-
-    .right-content-pc p{
-        display: inline-block;
-        margin:0;
-        transform: translate(-4px, -12px);
-        font-size:15px;
-        color:black;
-    }
-
 
     /*///////////search icon setting///////////////*/
     .search-icon{
         position: fixed;
         height:28px;
-        transform:translate(60px, 12px);
+        transform:translate(-175px, 16px);
         z-index: 2;
     }
 
     .search-icon.has-click{
-        transform:translate(430px, 12px);
+        transform:translate(186px, 16px);
         cursor: pointer;
-        animation: click-search-icon 1s;
+        animation: click-search-icon 1s ease-in-out;
     }
 
     @keyframes click-search-icon {
         from{
-            transform: translate(60px, 12px) rotate(0deg)
+            transform: translate(-175px, 16px) rotate(0deg)
         }
         to{
-            transform: translate(430px, 12px) rotate(360deg)
+            transform: translate(186px, 16px) rotate(360deg)
         }
     }
 
     .search-bar{
-        width:400px;
-        height:30px;
-        padding:0 0 0 30px;
+        height: 30px;
+        padding: 0 0 0 30px;
         border-radius: 40px;
-        transform: translate(60px, -20px);
+        transform: translate(110px, 15px);
+        flex: 1;
     }
 
+    .status-off{
+        text-align: right;
+        height: 60px;
+        line-height: 26px;
+    }
+    
+    .status-on{
+        display: block;
+        text-align: right;
+        margin-top: 10px;
+
+    }
 }

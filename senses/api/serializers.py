@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from user.models import User, Profile
-from story.models import Story, Story_Photo, Comment, Comment_Photo
+from user.models import User, Profile, Follow
+from story.models import Story, Story_Photo, Comment, Comment_Photo, Like
 from datetime import datetime
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
@@ -29,26 +29,36 @@ class UserSerializer(DynamicFieldsModelSerializer):
         fields = ['id', 'email', 'date_joined', 'is_npo']
 
 class ProfileSerializer(DynamicFieldsModelSerializer):
-    self_stories = serializers.SerializerMethodField(method_name="get_self_stories")
+
     class Meta:
         model = Profile
         fields = '__all__'
-    def get_self_stories(self, obj):
-        stories = obj.story_set.all().order_by('-time')[0:11]
-        serializer = StorySerializer(stories, many=True, fields=('id', 'user', 'time', 'modified_time', 
-                                                                'comments', 'upvote_total', 'text', 'image'))
-        return serializer.data
+
+class CommentPhotoSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = Comment_Photo
+        fields = '__all__'
 
 class CommentSerializer(DynamicFieldsModelSerializer):
     user = ProfileSerializer(many=False, fields=('user_id', 'username', 'avatar'))
-    time = serializers.SerializerMethodField(method_name="get_formatted_datetime")
-    modified_time = serializers.SerializerMethodField(method_name="get_formatted_datetime")
+    time = serializers.SerializerMethodField(method_name="get_formatted_time_datetime")
+    modified_time = serializers.SerializerMethodField(method_name="get_formatted_modified_timedatetime")
+    photos = serializers.SerializerMethodField(method_name="get_photos")
 
     class Meta:
         model = Comment
-        fields = ('id', 'user', 'comment', 'time', 'modified_time', 'upvote', 'text')
-    def get_formatted_datetime(self, obj):
+        fields = ('id', 'user', 'time', 'modified_time', 'photos', 'text', 'tag_username')
+
+    def get_formatted_time_datetime(self, obj):
         return obj.time.strftime('%Y/%m/%d %H:%M:%S')
+
+    def get_formatted_modified_timedatetime(self, obj):
+        return obj.modified_time.strftime('%Y/%m/%d %H:%M:%S')
+
+    def get_photos(self, obj):
+        photos = obj.comment_photo_set.all()
+        serializer = CommentPhotoSerializer(photos, many=True)
+        return serializer.data
 
 class StoryPhotoSerializer(DynamicFieldsModelSerializer):
     class Meta:
@@ -57,26 +67,41 @@ class StoryPhotoSerializer(DynamicFieldsModelSerializer):
 
 class StorySerializer(DynamicFieldsModelSerializer):
     user = ProfileSerializer(many=False, fields=('user_id', 'username', 'avatar'))
-    time = serializers.SerializerMethodField(method_name="get_formatted_datetime")
-    modified_time = serializers.SerializerMethodField(method_name="get_formatted_datetime")
+    time = serializers.SerializerMethodField(method_name="get_formatted_time_datetime")
+    modified_time = serializers.SerializerMethodField(method_name="get_formatted_modified_timedatetime")
     photos = serializers.SerializerMethodField(method_name="get_photos")
-    comments = serializers.SerializerMethodField(method_name="get_comments")
+    comments_num = serializers.SerializerMethodField(method_name="get_comments_num")
+    likes_num = serializers.SerializerMethodField(method_name="get_likes_num")
     
-
     class Meta:
         model = Story
         fields = '__all__'
 
-    def get_formatted_datetime(self, obj):
+    def get_formatted_time_datetime(self, obj):
         return obj.time.strftime('%Y/%m/%d %H:%M:%S')
 
-    def get_comments(self, obj):
-        comments = obj.comment_set.all().order_by('time')[0:11]
-        serializer = CommentSerializer(comments, many=True)
-        return serializer.data
+    def get_formatted_modified_timedatetime(self, obj):
+        return obj.modified_time.strftime('%Y/%m/%d %H:%M:%S')
 
     def get_photos(self, obj):
         photos = obj.story_photo_set.all()
-        serializer = StoryPhotoSerializer(photos, many=True)
+        serializer = StoryPhotoSerializer(photos, many=True, fields=('id', 'url',))
         return serializer.data
 
+    def get_comments_num(self, obj):
+        comments_num = obj.comment_set.all().count()
+        return comments_num
+
+    def get_likes_num(self, obj):
+        likes_num = obj.like_set.all().count()
+        return likes_num
+      
+class LikeSerializer(DynamicFieldsModelSerializer):
+
+    user = ProfileSerializer(many=False, fields=('user_id', 'username', 'avatar'))
+    story = StorySerializer(many=False, fields=('id', ))
+    comment = CommentSerializer(many=False, fields=('id', ))
+
+    class Meta:
+        model = Like
+        fields = '__all__'

@@ -18,10 +18,15 @@ urlpatterns = [
     
     
     re_path(r'^stories/$', views.get_stories_list, name='get_stories'),
-    re_path(r'^story/(?P<pk>\S+)/$', views.get_story, name='get_story'),
+    re_path(r'^story/(?P<pk>\S+)/$', views.handle_single_story, name='handle_single_story'),
     re_path(r'^stories/add/$', views.add_story, name='add_story'),
 
-    re_path(r'^comments/$', views.get_comments, name='get_comments'),
-    # re_path(r'^comment/(?P<pk>\S+)/$', views.get_comment, name='get_comment'),
+    re_path(r'^comments/$', views.get_comments_list, name='get_comments_list'),
+    re_path(r'^comment/(?P<pk>\S+)/$', views.delete_comment, name='delete_comment'),
+    re_path(r'^comments/add/$', views.add_comment, name='add_comment'),
+
+    re_path(r'^likes/$', views.get_likes_list, name='get_likes_list'),
+    re_path(r'^like/$', views.handle_single_like, name='handle_single_like'),
+    re_path(r'^likes/add/$', views.add_like, name='add_like'),
 
 ]

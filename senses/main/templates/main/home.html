@@ -11,25 +11,12 @@
 
 
 {% block mainblock %}
-    <h1>Home</h1>
-    
-    
-    <!--Blank padding-->
-    <div style="height:80px;"></div>
-
-    <!--Botnav-Bot-Layer-->
-    <div class="botnav-bot-layer"></div>
-
-    <!--Bot-Nav-Select-Indicator-->
-    <div class="botnav-select-indicator"></div>
-
-    <!-- Bot-Nav-Mobile -->
-    <div class="bot-navbar-mobile">
-        <a href="/"><img src="{% static 'images/icons/home.png' %}"/></a>
-        <a class="navStoryBtn" href="/stories"><img src="{% static 'images/icons/stories.png' %}"/></a>
-        <a class="navHelpsBtn" href="/helps"><img src="{% static 'images/icons/helps.png' %}"/></a>
-        <a class="navExchangeBtn" href="/exchange"><img src="{% static 'images/icons/exchange.png' %}"/></a>
-        <a class="navProfileBtn" href="{% url 'login' %}"><img src="{% static 'images/icons/profile.png' %}"/></a>
-        <a class="navSettingBtn" href="/setting"><img src="{% static 'images/icons/setting.png' %}"/></a>
+    <!--main content-->
+    <div class="layout">
+        <div class="tags-block"></div>
+        <div class="stories-block"><h>Home</h></div>
+        <div class="info-block"></div>
     </div>
+    
+
 {% endblock %}

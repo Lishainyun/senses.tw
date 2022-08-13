@@ -1,6 +1,6 @@
 "use strict"
 
-const autoResizeInputElement = () =>{
+const autoResizeInputElement = (event) =>{
 
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');

@@ -10,16 +10,18 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
     <link rel="shortcut icon" href="{% static 'images/icons/favicon.io' %}">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+
     {% block linkblock%}
     {% endblock %}
 </head>
 <body>
     <div class="overlay"></div>
     <!--Blank padding-->
-    <div style="height:50px;"></div>
+    <div style="height:60px;"></div>
 
     <!--Top-Nav-->
     <div class="top-navbar">
@@ -27,8 +29,16 @@
         <div class="top-navbar-mobile">
             <a href="/"><img src="{% static 'images/logo/logo_1_black.png' %}"/></a>
             <div class="right-content-mobile">
-                <a class="navSearchBtn" href="/search"><img src="{% static 'images/icons/search.png' %}"/></a>
-                <a class="navMessageBtn" href="/message"><img src="{% static 'images/icons/message.png' %}"></a>
+                <div class="status-off">
+                    <a class="login-btn" href="{% url 'login' %}"><p class="login">登入</p></a>
+                    <a class="register-btn" href="{% url 'register' %}"><p class="register">註冊</p></a>
+                </div>
+                <div class="status-on">
+                    <a class="navSearchBtn" href=""><img src="{% static 'images/icons/search.png' %}"/></a>
+                    <a class="navStoryBtn" href="{% url 'stories' %}"><img src="{% static 'images/icons/stories_new.png' %}"/></a>                
+                    <a class="navMessageBtn" href=""><img src="{% static 'images/icons/message.png' %}"></a>
+                    <a class="navProfileBtn" href=""><img class="navProfile" src="{% static 'media_uploaded/images/profile/default.png' %}"/></a>
+                </div>
             </div>
         </div>
         <!--PC-->
@@ -37,12 +47,15 @@
             <img class="search-icon" src="{% static 'images/icons/search_before.png' %}"/>
             <input class="search-bar" type="text" name="search" placeholder="搜尋更多善的時刻" />
             <div class="right-content-pc">
-                <a class="navStoryBtn" href="{% url 'stories' %}"><img src="{% static 'images/icons/stories_pc.png' %}"/><p>傾聽故事</p></a>
-                <a class="navHelpsBtn" href=""><img src="{% static 'images/icons/helps_pc.png' %}"/><p>伸出援手</p></a>
-                <a class="navExchangeBtn" href=""><img src="{% static 'images/icons/exchange_pc.png' %}"/><p>善點兌換</p></a>
-                <a class="navMessageBtn" href=""><img src="{% static 'images/icons/message_pc.png' %}"><p>訊息</p></a>
-                <a class="navProfileBtn" href="{% url 'login' %}"><img src="{% static 'images/icons/profile_pc.png' %}"/><p>個人檔案</p></a>
-                <a class="navSettingBtn href=""><img src="{% static 'images/icons/setting_pc.png' %}"/><p>設定</p></a>
+                <div class="status-off">
+                    <a class="login-btn" href="{% url 'login' %}"><p class="login">登入</p></a>
+                    <a class="register-btn" href="{% url 'register' %}"><p class="register">註冊</p></a>
+                </div>
+                <div class="status-on">
+                    <a class="navStoryBtn" href="{% url 'stories' %}"><img src="{% static 'images/icons/stories_new.png' %}"/></a>                
+                    <a class="navMessageBtn" href=""><img src="{% static 'images/icons/message.png' %}"></a>
+                    <a class="navProfileBtn" href=""><img class="navProfile" src="{% static 'media_uploaded/images/profile/default.png' %}"/></a>
+                </div>
             </div>
         </div>        
     </div>

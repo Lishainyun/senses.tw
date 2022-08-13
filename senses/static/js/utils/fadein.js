@@ -12,22 +12,7 @@ const pushEleToEnabledList = (() => {
         })
     }
 
-    // add stories-edit button
-    const storiesEditBtn = document.querySelectorAll('.stories-addblock-button')
-    if(storiesAddBlockBtn && storiesAddBlockBtn.length !== 0){
-        storiesAddBlockBtn.forEach(btn=>{
-            elesForTriggeringFadeinBlock.push(btn)
-        })
-    }
-
 })()
-
-const renderFadeIns = (...kwargs) => {
-    kwargs.forEach(arg=>{
-        arg.classList.add('has-triggered')
-    })
-
-}
 
 function addListenerToelesForTriggeringFadeinBlock(elesForTriggeringFadeinBlock){
 
@@ -45,3 +30,10 @@ function addListenerToelesForTriggeringFadeinBlock(elesForTriggeringFadeinBlock)
 }
 
 addListenerToelesForTriggeringFadeinBlock(elesForTriggeringFadeinBlock)
+
+const renderFadeIns = (...kwargs) => {
+    kwargs.forEach(arg=>{
+        arg.classList.add('has-triggered')
+    })
+
+}

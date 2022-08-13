@@ -18,7 +18,7 @@ class Search{
 document.querySelector('.search-bar').addEventListener('focus', ()=>{
     let search = new Search
     search.clickSearchIcon()
-    document.querySelector('.search-icon.has-click').src = search.url+'static/images/icons/search_after.png'
+    document.querySelector('.search-icon.has-click').src = search.url+'static/images/icons/search_after_new.png'
     if (document.querySelector('.search-bar') !== document.activeElement){
         document.querySelector('.search-icon.has-click').classList.remove('has-click')
     }

@@ -3,6 +3,9 @@ from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.core.validators import FileExtensionValidator
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
+import uuid
+
 
 class UserManager(BaseUserManager):
 
@@ -75,3 +78,16 @@ class Profile(models.Model):
     def __str__(self):
         return self.user_id.email
 
+class Follow(models.Model):
+
+    id = models.UUIDField(default=uuid.uuid4, unique=True, 
+                          primary_key=True, editable=False)
+    time = models.DateTimeField(default=timezone.now, editable=False)
+    follower = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='follow_follower')
+    followed = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='follow_followeed')
+
+    def __str__(self):
+        return str(self.id)
+
+    class Meta:
+        db_table = 'Follow'

@@ -62,6 +62,10 @@ class Profile{
                 this.currentUserBio = response['bio']
                 this.currentUserIntro = response['intro']
 
+                // render navbar avatar
+                const avatar = response['avatar']
+                renderNavbarAvatar(avatar)
+
                 // when user is logged in, change navbar profile button href attribute
                 // and avoid logged in user going to login page.
                 redirectNavProfileBtnHrefToPersonal(currentUserName)
@@ -142,8 +146,8 @@ class Profile{
 
                         personalInfoElement.insertAdjacentHTML('afterbegin', profileInfoHTML)
 
-                        // render stories of the profile
-                        this.renderSingleProfileStories(data)
+                        // // render stories of the profile
+                        // this.renderSingleProfileStories(data)
 
                         // add listener for the logout btn
                         user.logoutUser()
@@ -158,8 +162,8 @@ class Profile{
                                                 `
                         personalInfoElement.insertAdjacentHTML('afterbegin', profileInfoHTML)
 
-                        // render profile stories
-                        this.renderSingleProfileStories(data)
+                        // // render profile stories
+                        // this.renderSingleProfileStories(data)
                     }
                 }
             })
@@ -170,200 +174,203 @@ class Profile{
         }
     }
 
-    async renderSingleProfileStories(profileData){
+    // async renderSingleProfileStories(profileData){
         
-        const profileStoriesData = profileData.self_stories
-        const profileStories = profileStoriesData.map(story=>{
+    //     const profileStoriesData = profileData.self_stories
+    //     const profileStories = profileStoriesData.map(story=>{
             
-            let storyId = story.id;
-            let storyAuthorAvatar = story.user.avatar;
-            let username = story.user.username;
-            let createdTime = story.time;
-            let modified_time = story.modified_time;
-            let text = story.text;
-            let image = story.image;
-            let upvoteTotal = story.upvote_total;
-            let commentsNum = story.comments.length
+    //         let storyId = story.id;
+    //         let storyAuthorAvatar = story.user.avatar;
+    //         let username = story.user.username;
+    //         let createdTime = story.time;
+    //         let modified_time = story.modified_time;
+    //         let text = story.text;
+    //         let image = story.image;
+    //         let upvoteTotal = story.upvote_total;
+    //         let commentsNum = story.comments.length
             
-            let commentIputPlaceholder;
+    //         let commentIputPlaceholder;
 
-            if(loginStatus === "您已登入"){
-                commentIputPlaceholder = '留言'
-            } else{
-                commentIputPlaceholder = loginStatus
-            }
+    //         if(loginStatus === "您已登入"){
+    //             commentIputPlaceholder = '留言'
+    //         } else{
+    //             commentIputPlaceholder = loginStatus
+    //         }
             
-            if(image){
-                return `<div class="render-stories-wrap">
-                            <a href="/user/profile/${username}"><img class="stories-avatar" src="${storyAuthorAvatar}"/></a>
-                            <a href="/user/profile/${username}"><div class="stories-username">${username}</div></a>
-                            <div class="stories-options">&ctdot;</div>
-                            <div class="stories-time">${createdTime}</div>
-                            <div class="stories-text">${text}</div>
-                            <img class="stories-image" src="${image}"/>
-                            <div class="stories-upvote" data-story="${storyId}">
-                                <img src="/static/images/story/comment-like.png"/>
-                                <p>${upvoteTotal} </p>
-                            </div>                                    
-                            <div data-story="${storyId}">${commentsNum} 則留言</div>
-                            <div class="stories-click-like-comment-wrapper">
-                                <div class="stories-click-like"><i class="fa-solid fa-heart"></i>&nbsp喜歡</div>
-                                <div class="stories-click-comment" data-story="${storyId}"><i class="fa-solid fa-comment"></i>&nbsp留言</div>
-                            </div>
-                            <div class="write-comment-wrapper">
-                                <a href="${currentUserName}"><img class="write-comment-avatar" src="${currentUserAvatar}"/></a>
-                                <textarea class="write-comment-input-element" placeholder="${commentIputPlaceholder}" oninput="autoResizeInputElement()"></textarea>
-                                <i class="fa-solid fa-image"></i>
-                                <button class="write-comment-btn-element">送出</button>
-                            </div>
-                        </div>`                        
-            } else{
-                return `<div class="render-stories-wrap">
-                            <a href="/user/profile/${username}"><img class="stories-avatar" src="${storyAuthorAvatar}"/></a>
-                            <a href="/user/profile/${username}"><div class="stories-username">${username}</div></a>
-                            <div class="stories-options">&ctdot;</div>
-                            <div class="stories-time">${createdTime}</div>
-                            <div class="stories-text">${text}</div>
-                            <div class="stories-upvote" data-story="${storyId}">
-                                <img src="/static/images/story/comment-like.png"/>
-                                <p>${upvoteTotal} </p>
-                            </div>
-                            <div data-story="${storyId}">${commentsNum} 則留言</div>
-                            <div class="stories-click-like-comment-wrapper">
-                                <div class="stories-click-like"><i class="fa-solid fa-heart"></i>&nbsp喜歡</div>
-                                <div class="stories-click-comment" data-story="${storyId}"><i class="fa-solid fa-comment"></i>&nbsp留言</div>
-                            </div>
-                            <div class="write-comment-wrapper">
-                                <a href="/user/profile/${currentUserName}"><img class="write-comment-avatar" src="${currentUserAvatar}"/></a>
-                                <textarea class="write-comment-input-element" placeholder="${commentIputPlaceholder}" oninput="autoResizeInputElement()"></textarea>
-                                <i class="fa-solid fa-image"></i>
-                                <button class="write-comment-btn-element">送出</button>
-                            </div>
-                        </div>`
-            }
-        }).join("");
+    //         if(image){
+    //             return `<div class="render-stories-wrap">
+    //                         <a href="/user/profile/${username}"><img class="stories-avatar" src="${storyAuthorAvatar}"/></a>
+    //                         <a href="/user/profile/${username}"><div class="stories-username">${username}</div></a>
+    //                         <div class="stories-options">&ctdot;</div>
+    //                         <div class="stories-time">${createdTime}</div>
+    //                         <div class="stories-text">${text}</div>
+    //                         <img class="stories-image" src="${image}"/>
+    //                         <div class="stories-upvote" data-story="${storyId}">
+    //                             <img src="/static/images/story/comment-like.png"/>
+    //                             <p>${upvoteTotal} </p>
+    //                         </div>                                    
+    //                         <div data-story="${storyId}">${commentsNum} 則留言</div>
+    //                         <div class="stories-click-like-comment-wrapper">
+    //                             <div class="stories-click-like"><i class="fa-solid fa-heart"></i>&nbsp喜歡</div>
+    //                             <div class="stories-click-comment" data-story="${storyId}"><i class="fa-solid fa-comment"></i>&nbsp留言</div>
+    //                         </div>
+    //                         <div class="write-comment-wrapper">
+    //                             <a href="${currentUserName}"><img class="write-comment-avatar" src="${currentUserAvatar}"/></a>
+    //                             <textarea class="write-comment-input-element" placeholder="${commentIputPlaceholder}" oninput="autoResizeInputElement()"></textarea>
+    //                             <i class="fa-solid fa-image"></i>
+    //                             <button class="write-comment-btn-element">送出</button>
+    //                         </div>
+    //                     </div>`                        
+    //         } else{
+    //             return `<div class="render-stories-wrap">
+    //                         <a href="/user/profile/${username}"><img class="stories-avatar" src="${storyAuthorAvatar}"/></a>
+    //                         <a href="/user/profile/${username}"><div class="stories-username">${username}</div></a>
+    //                         <div class="stories-options">&ctdot;</div>
+    //                         <div class="stories-time">${createdTime}</div>
+    //                         <div class="stories-text">${text}</div>
+    //                         <div class="stories-upvote" data-story="${storyId}">
+    //                             <img src="/static/images/story/comment-like.png"/>
+    //                             <p>${upvoteTotal} </p>
+    //                         </div>
+    //                         <div data-story="${storyId}">${commentsNum} 則留言</div>
+    //                         <div class="stories-click-like-comment-wrapper">
+    //                             <div class="stories-click-like"><i class="fa-solid fa-heart"></i>&nbsp喜歡</div>
+    //                             <div class="stories-click-comment" data-story="${storyId}"><i class="fa-solid fa-comment"></i>&nbsp留言</div>
+    //                         </div>
+    //                         <div class="write-comment-wrapper">
+    //                             <a href="/user/profile/${currentUserName}"><img class="write-comment-avatar" src="${currentUserAvatar}"/></a>
+    //                             <textarea class="write-comment-input-element" placeholder="${commentIputPlaceholder}" oninput="autoResizeInputElement()"></textarea>
+    //                             <i class="fa-solid fa-image"></i>
+    //                             <button class="write-comment-btn-element">送出</button>
+    //                         </div>
+    //                     </div>`
+    //         }
+    //     }).join("");
 
-        const personalStoriesAddBlockBtn = document.querySelector('.stories-addblock-button') // inserted html element 
-        personalStoriesAddBlockBtn.insertAdjacentHTML('afterend', profileStories)  
+    //     const personalStoriesAddBlockBtn = document.querySelector('.stories-addblock-button') // inserted html element 
+    //     personalStoriesAddBlockBtn.insertAdjacentHTML('afterend', profileStories)  
         
-        // add event listener to every "upvote button" element
-        // that has "storyId" class 
-            // document.querySelectorAll('.stories-upvote').forEach(ele=>{
-            //     ele.onclick = event =>{
-            //         this.storyId = event.target.dataset.story
-            //         this.username = usernameOfCurrentPathname
-            //         this.renderSingleProfileStoryComments()
-            //     }
-            // })
+    //     // add event listener to every "upvote button" element
+    //     // that has "storyId" class 
+    //         // document.querySelectorAll('.stories-upvote').forEach(ele=>{
+    //         //     ele.onclick = event =>{
+    //         //         this.storyId = event.target.dataset.story
+    //         //         this.username = usernameOfCurrentPathname
+    //         //         this.renderSingleProfileStoryComments()
+    //         //     }
+    //         // })
 
-        // add event listener to every comment button element
-         // that has "storyId" class 
-        document.querySelectorAll('.stories-upvote').forEach(ele=>{
-            let commentNums = ele.nextSibling.nextSibling
+    //     // add event listener to every comment button element
+    //      // that has "storyId" class 
+    //     document.querySelectorAll('.stories-upvote').forEach(ele=>{
+    //         let commentNums = ele.nextSibling.nextSibling
 
-            commentNums.onclick = event =>{
+    //         commentNums.onclick = event =>{
 
-                const triggeredEvent = event.target
-                this.storyId = triggeredEvent.dataset.story
-                this.renderSingleProfileStoryComments(triggeredEvent)
-            }
-        })
+    //             const triggeredEvent = event.target
+    //             this.storyId = triggeredEvent.dataset.story
+    //             this.renderSingleProfileStoryComments(triggeredEvent)
+    //         }
+    //     })
 
-        document.querySelectorAll('.stories-click-comment').forEach(ele=>{
-            ele.onclick = event =>{
+    //     document.querySelectorAll('.stories-click-comment').forEach(ele=>{
+    //         ele.onclick = event =>{
 
-                const triggeredEvent = event.target
-                this.storyId = triggeredEvent.dataset.story
-                this.renderSingleProfileStoryComments(triggeredEvent)
+    //             const triggeredEvent = event.target
+    //             this.storyId = triggeredEvent.dataset.story
+    //             this.renderSingleProfileStoryComments(triggeredEvent)
 
-            }
-        })
-    }
+    //         }
+    //     })
+    // }
 
-    async renderSingleProfileStoryComments(triggeredEvent){
+    // async renderSingleProfileStoryComments(triggeredEvent){
 
-        this.getProfile(usernameOfCurrentPathname)
-        .then(response=>{
+    //     this.getProfile(usernameOfCurrentPathname)
+    //     .then(response=>{
 
-            const profileStoriesData = response.self_stories
+    //         const profileStoriesData = response.self_stories
 
-            // 點擊並展開留言內容後，讓特定storyId貼文的留言數量、留言按鈕listener失效
-            // 防止重複的留言內容被呼叫並渲染
-            if(!triggeredEvent.classList.contains("has-clicked")){
+    //         // 點擊並展開留言內容後，讓特定storyId貼文的留言數量、留言按鈕listener失效
+    //         // 防止重複的留言內容被呼叫並渲染
+    //         if(!triggeredEvent.classList.contains("has-clicked")){
                 
-                document.querySelectorAll(`[data-story='${this.storyId}']`).forEach(element=>{
-                    element.classList.add('has-clicked')
-                })
+    //             document.querySelectorAll(`[data-story='${this.storyId}']`).forEach(element=>{
+    //                 element.classList.add('has-clicked')
+    //             })
 
-                let profileStoryComments;
-                profileStoriesData.forEach(data=>{
-                    if(data.id === this.storyId){
-                        profileStoryComments = data.comments
-                    }
-                })
+    //             let profileStoryComments;
+    //             profileStoriesData.forEach(data=>{
+    //                 if(data.id === this.storyId){
+    //                     profileStoryComments = data.comments
+    //                 }
+    //             })
 
-                const comments = profileStoryComments.map(comment=>{
-                    let avatar = comment.user.avatar;
-                    let username = comment.user.username;
-                    let createdTime = comment.time;
-                    let text = comment.text;
-                    let image = comment.image 
+    //             const comments = profileStoryComments.map(comment=>{
+    //                 let avatar = comment.user.avatar;
+    //                 let username = comment.user.username;
+    //                 let createdTime = comment.time;
+    //                 let text = comment.text;
+    //                 let image = comment.image 
                     
-                    if(image){
-                        return `<div class="comment-detail-wrapper">
-                                    <a href="/user/profile/${username}"><img class="comment-detail-avatar" src="${avatar}"/></a>
-                                    <a href="/user/profile/${username}"><div class="comment-detail-username">${username}</div></a>
-                                    <div class="comment-detail-created-time">${createdTime}</div>
-                                    <div class="comment-detail-text">${text}</div>
-                                    <img class="comment-detail-image" src="${image}"/>
-                                </div>`
-                    } else{
-                        return `<div class="comment-detail-wrapper">
-                                    <a href="/user/profile/${username}"><img class="comment-detail-avatar" src="${avatar}"/></a>
-                                    <a href="/user/profile/${username}"><div class="comment-detail-username">${username}</div></a>
-                                    <div class="comment-detail-created-time">${createdTime}</div>
-                                    <div class="comment-detail-text">${text}</div>
-                                </div>`   
-                    }
-                }).join("");
+    //                 if(image){
+    //                     return `<div class="comment-detail-wrapper">
+    //                                 <a href="/user/profile/${username}"><img class="comment-detail-avatar" src="${avatar}"/></a>
+    //                                 <a href="/user/profile/${username}"><div class="comment-detail-username">${username}</div></a>
+    //                                 <div class="comment-detail-created-time">${createdTime}</div>
+    //                                 <div class="comment-detail-text">${text}</div>
+    //                                 <img class="comment-detail-image" src="${image}"/>
+    //                             </div>`
+    //                 } else{
+    //                     return `<div class="comment-detail-wrapper">
+    //                                 <a href="/user/profile/${username}"><img class="comment-detail-avatar" src="${avatar}"/></a>
+    //                                 <a href="/user/profile/${username}"><div class="comment-detail-username">${username}</div></a>
+    //                                 <div class="comment-detail-created-time">${createdTime}</div>
+    //                                 <div class="comment-detail-text">${text}</div>
+    //                             </div>`   
+    //                 }
+    //             }).join("");
     
-                // let selectedInsertElement = all commentnums element of both pc and mobile;
-                let selectedInsertElements = []
+    //             // let selectedInsertElement = all commentnums element of both pc and mobile;
+    //             let selectedInsertElements = []
                 
-                Array.from(document.querySelectorAll(`[data-story='${this.storyId}']`)).forEach(element=>{
-                    if(element.classList.length <= 1){
-                        selectedInsertElements.push(element) 
-                    }
-                });
+    //             Array.from(document.querySelectorAll(`[data-story='${this.storyId}']`)).forEach(element=>{
+    //                 if(element.classList.length <= 1){
+    //                     selectedInsertElements.push(element) 
+    //                 }
+    //             });
 
-                selectedInsertElements.forEach(element=>{
-                    element.insertAdjacentHTML('afterend', comments);
-                })
+    //             selectedInsertElements.forEach(element=>{
+    //                 element.insertAdjacentHTML('afterend', comments);
+    //             })
 
-                // add top border to divide the comments block and contents block
-                let nextElementSiblingOfCommentsnum = []
-                Array.from(document.querySelectorAll(`[data-story='${this.storyId}']`)).forEach(element=>{
-                    if(element.classList.length <= 1){
-                        nextElementSiblingOfCommentsnum.push(element.nextElementSibling) 
-                    }
-                });
+    //             // add top border to divide the comments block and contents block
+    //             let nextElementSiblingOfCommentsnum = []
+    //             Array.from(document.querySelectorAll(`[data-story='${this.storyId}']`)).forEach(element=>{
+    //                 if(element.classList.length <= 1){
+    //                     nextElementSiblingOfCommentsnum.push(element.nextElementSibling) 
+    //                 }
+    //             });
                 
-                nextElementSiblingOfCommentsnum.forEach(element=>{
-                    if(element.className !== 'stories-click-like-comment-wrapper'){
-                        element.style = 'border-style:solid;border-width:1px 0 0 0;border-color:#e0e0e0'
-                    }
-                })
-            }
+    //             nextElementSiblingOfCommentsnum.forEach(element=>{
+    //                 if(element.className !== 'stories-click-like-comment-wrapper'){
+    //                     element.style = 'border-style:solid;border-width:1px 0 0 0;border-color:#e0e0e0'
+    //                 }
+    //             })
+    //         }
 
-        }).catch(error=>{
-            console.log(error)
-        })
-    }
+    //     }).catch(error=>{
+    //         console.log(error)
+    //     })
+    // }
+}
+
+async function renderNavbarAvatar(avatarSRC){
+    const navProfile = document.querySelectorAll('.navProfile')
+    navProfile.forEach(ele=>{
+        ele.src = avatarSRC
+    })
 }
 
 const profile = new Profile()
 profile.getCurrentUserProfile()
-
-function getCurrentUserProfile(){
-    profile.getCurrentUserProfile();
-}

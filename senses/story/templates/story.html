@@ -7,6 +7,8 @@
 {% endblock %}
 {% block linkblock %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/story/story.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/story/comment.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/story/like.css' %}">
     <script src="https://kit.fontawesome.com/2b1fe198d1.js" crossorigin="anonymous"></script>
 {% endblock %}
 
@@ -16,10 +18,10 @@
         <div class="tags-block"></div>
         <div class="stories-block">
             <div class="stories-add-block">
-                <div class="stories-addblock-button">分享故事</div>
+                <div class="stories-addblock-button"><i class='bx bx-book-add'></i>分享故事</div>
                 <div class="stories-addblock-fadein-block">
-                    <p class="fadein-block-title">分享故事</p>
-                    <p class="fadein-edit-title">編輯故事</p>
+                    <p class="fadein-block-title"><i class='bx bx-book-add'></i>分享故事</p>
+                    <p class="fadein-edit-title"><i class="fa-regular fa-pen-to-square"></i> 編輯故事</p>
                     <div class="fadein-block-close">X</div>
                     <div class="fadein-block-form">
                         <textarea class="form-text-content-input" id="form-text-content-input" name="form-text-content-input" placeholder="嗨!分享些什麼吧~"></textarea><br/>
@@ -31,37 +33,28 @@
                     </div>
                 </div>
             </div>
+            <div class="messageBlock-fadein-block">
+                <p class="fadein-block-title"><i class='bx bxs-eraser'></i>刪除故事</p>
+                <p class="message">確定要刪除嗎？刪除後就無法再回復囉！</p>
+                <div class="delete-btn-wrapper" type="submit">
+                    <p class="delete-cancel-btn">取消</p>
+                    <p class="delete-confirm-btn">確定</p>
+                </div>
+            </div>
         </div>
         <div class="info-block"></div>
     </div>
+    <div style="height: 30px;"></div>
 
-    <!--Blank padding-->
-    <div style="height:80px;"></div>
-
-    <!--Botnav-Bot-Layer-->
-    <div class="botnav-bot-layer"></div>
-
-    <!--Bot-Nav-Select-Indicator-->
-    <div class="botnav-select-indicator"></div>
-
-    <!-- Bot-Nav-Mobile -->
-    <div class="bot-navbar-mobile">
-        <a href="/"><img src="{% static 'images/icons/home.png' %}"/></a>
-        <a class="navStoryBtn" href="/stories"><img src="{% static 'images/icons/stories.png' %}"/></a>
-        <a class="navHelpsBtn" href="/helps"><img src="{% static 'images/icons/helps.png' %}"/></a>
-        <a class="navExchangeBtn" href="/exchange"><img src="{% static 'images/icons/exchange.png' %}"/></a>
-        <a class="navProfileBtn" href="{% url 'login' %}"><img src="{% static 'images/icons/profile.png' %}"/></a>
-        <a class="navSettingBtn" href="/setting"><img src="{% static 'images/icons/setting.png' %}"/></a>
-    </div>
 {% endblock %}
 
 {% block jsblock %}
     <script src="{% static 'js/utils/story_loader.js' %}"></script>
-    <script src="{% static 'js/utils/story_imagePreview.js' %}"></script>
-    <script src="{% static 'js/story/comment.js' %}"></script>
-    <script src="{% static 'js/story/story.js' %}"></script>
-    <script src="{% static 'js/utils/autoResizeInputElement.js' %}"></script>
+    <script src="{% static 'js/utils/imagePreview.js' %}"></script>
     <script src="{% static 'js/utils/story_imagesSwiper.js' %}"></script>
-
+    <script src="{% static 'js/utils/story_scroll.js' %}"></script>
+    <script src="{% static 'js/story/comment.js' %}"></script>
+    <script src="{% static 'js/story/like.js' %}"></script>
+    <script src="{% static 'js/story/story.js' %}"></script>
 
 {% endblock %}

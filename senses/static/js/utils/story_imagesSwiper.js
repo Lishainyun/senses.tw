@@ -45,7 +45,7 @@ function move(photoWrapperEle, photoNums){
             let swipeDistance = +(signValue*xTravelDistance/windowInnerWidth).toFixed(2)
             
 
-            if((previousPhotoIndex > 0 || signValue < 0) && (previousPhotoIndex < photoNums - 1 || signValue > 0) && swipeDistance > 0.1){
+            if((previousPhotoIndex > 0 || signValue < 0) && (previousPhotoIndex < photoNums - 1 || signValue > 0) && swipeDistance > 0.02){
 
                 swipeDistance = 1 - swipeDistance
                 event.target.style.setProperty('--i', previousPhotoIndex -= signValue);
@@ -110,9 +110,7 @@ function createPhotoSwiperDots(photoWrapperEle, photoNums){
 
 }
 
-const addEventToAllPhotoWrapper = function(event){
-
-    clearTimeout(photoWrapperEleList)
+const addEventToAllPhotoWrapper = function(){
 
     photoWrapperEleList.forEach(photoWrapperEle=>{
         
@@ -129,19 +127,28 @@ const addEventToAllPhotoWrapper = function(event){
 
             photoWrapperEle.addEventListener('mousemove', drag(photoWrapperEle, photoNums), false);
             photoWrapperEle.addEventListener('touchmove', drag(photoWrapperEle, photoNums), false);
+
+            if(photoNums > 1){
+                createPhotoSwiperDots(photoWrapperEle, photoNums)
+            }
+
         } else {
             photoWrapperEle.classList.add('has-no-image')
         }
 
-        if(photoNums>1)
-        createPhotoSwiperDots(photoWrapperEle, photoNums)
     }) 
 
-    closeStoriesLoader()
+    closeLoader()
 
-    //display stories-block
-    const storiesBlockEle = document.querySelector('.stories-block')
-    storiesBlockEle.style.display = 'block'
+    //display rendered stories wrapper
+    const storiesBlock = document.querySelector('.stories-block')
+    storiesBlock.style.display = 'block'
+
+    const storiesWrap = document.querySelectorAll('.render-stories-wrap')
+    storiesWrap.forEach(ele=>{
+        ele.style.display = 'block'
+
+    })
 
 }
 
@@ -151,18 +158,3 @@ const displayRenderStoriesWrap = function(){
         ele.style.display = 'block'
     })
 }
-
-
-window.setTimeout(()=>{
-
-    refreshPhotoWrapperEleList()
-
-    addEventToAllPhotoWrapper()
-
-}, 1000)
-
-
-
-
-
-

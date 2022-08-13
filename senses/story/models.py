@@ -15,7 +15,6 @@ class Story(models.Model):
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     time = models.DateTimeField(default=timezone.now, editable=False)
     modified_time = models.DateTimeField(null=True, blank=True)
-    upvote_total = models.IntegerField(default=0, null=True, blank=True)
     text = models.TextField(max_length=5000)
 
     def __str__(self):
@@ -24,6 +23,7 @@ class Story(models.Model):
     class Meta:
         db_table = 'story'
 
+
 def set_story_photo_upload_path(instance, filename):
     return f'images/story/{instance.story}/{filename}'
 
@@ -31,14 +31,13 @@ class Story_Photo(models.Model):
 
     id = models.UUIDField(default=uuid.uuid4, unique=True, 
                           primary_key=True, editable=False)
-    time = models.DateTimeField(default=timezone.now, editable=False)
+    time = models.DateTimeField()
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, blank=True, null=True)
     url = models.ImageField(blank=True, null=True, upload_to=set_story_photo_upload_path, 
                         validators=[FileExtensionValidator(
                         allowed_extensions=['tiff', 'tif', 'bmp', 'jpg', 'jpeg', 'gif', 'png', 'eps'])])
     def __str__(self):
-        return str(self.id)
+        return str(self.url).split('/')[-1]
 
     class Meta:
         db_table = 'Story_Photo'
@@ -48,12 +47,12 @@ class Comment(models.Model):
     id = models.UUIDField(default=uuid.uuid4, unique=True, 
                           primary_key=True, editable=False)
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    story = models.ForeignKey(Story, on_delete=models.CASCADE, default=False, null=True, blank=True)
-    comment = models.ForeignKey('self', on_delete=models.CASCADE, default=False, null=True, blank=True, related_name="comment_comment")
+    story_id = models.ForeignKey(Story, on_delete=models.CASCADE, default=False, null=True, blank=True)
+    comment_id = models.ForeignKey('self', on_delete=models.CASCADE, default=False, null=True, blank=True, related_name="comment_comment")
     time = models.DateTimeField(default=timezone.now, editable=False)
-    modified_time = models.DateTimeField(null=True, blank=True)
-    upvote = models.BooleanField(default=False, null=True, blank=True)
+    modified_time = models.DateTimeField(null=True, blank=True)  
     text = models.TextField(max_length=5000, null=True, blank=True)
+    tag_username = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
         return str(self.id)
@@ -68,17 +67,32 @@ class Comment_Photo(models.Model):
 
     id = models.UUIDField(default=uuid.uuid4, unique=True, 
                           primary_key=True, editable=False)
-    time = models.DateTimeField(default=timezone.now, editable=False)
+    time = models.DateTimeField()
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, blank=True, null=True)
     url = models.ImageField(blank=True, null=True, upload_to=set_comment_photo_upload_path, 
                         validators=[FileExtensionValidator(
                         allowed_extensions=['tiff', 'tif', 'bmp', 'jpg', 'jpeg', 'gif', 'png', 'eps'])])
     
     def __str__(self):
-        return str(self.comment)
+        return str(self.url).split('/')[-1]
 
     class Meta:
         db_table = 'Comment_Photo'
+
+class Like(models.Model):
+
+    id = models.UUIDField(default=uuid.uuid4, unique=True, 
+                          primary_key=True, editable=False)
+    time = models.DateTimeField(default=timezone.now, editable=False)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE, default=False, null=True, blank=True)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, default=False, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.id)
+
+    class Meta:
+        db_table = 'Like'
+
 
 
