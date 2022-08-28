@@ -11,13 +11,49 @@ class Story{
 
     }
 
-    async getStoryList(page, keyword, userId){
-        const response = await fetch(this.storyListApiUrl+`?keyword=${keyword}&page=${page}&user=${userId}`, {
-            method: 'GET',
-            cache: 'no-cache',
-        })
+    async getStoryList(page, keyword, userId, kwargs){
 
-        return await response.json();
+        if(kwargs && kwargs.length !== 0){
+
+            const token = localStorage.getItem('token')
+
+            const headers = {
+                'Authorization': 'Bearer ' + token,
+                "Content-Type": "application/json",
+                "Accept": "application/json",   
+            }            
+            const followings = kwargs.followings
+            const body = {"followings": followings,}
+            const response = await fetch(this.storyListApiUrl, {
+                method: 'PATCH',
+                headers: headers,
+                body: JSON.stringify(body),
+                cache: 'no-cache',
+            })
+    
+            return await response.json();
+
+        } else {
+            let profileLocation; 
+            let profileLocationUsername;
+            if(currentPathnameSplitted[2] === 'profile'){
+                profileLocation = currentPathnameSplitted[2]
+                profileLocationUsername =  usernameOfCurrentPathname
+            }
+    
+            const currentLocation = profileLocation || 'story'
+            const currentLocationUsername = profileLocationUsername || null
+    
+            const response = await fetch(this.storyListApiUrl+`?keyword=${keyword}&page=${page}&user=${userId}&currentLocation=${currentLocation}&currentLocationUsername=${currentLocationUsername}`, {
+                method: 'GET',
+                cache: 'no-cache',
+            })
+    
+            return await response.json();
+        }
+
+
+
     };
 
     async getSingleStory(storyId){
@@ -210,27 +246,85 @@ class Story{
 
     async renderStories(page, keyword){
 
-        displayLoader()
-
-        const userId = currentUserId
+        let userId = currentUserId;
 
         this.getStoryList(page, keyword, userId)
             .then(response=>{
-                                
-                const stories = response.data.map(story=>{
+                
+                const data = response.data
+                const result = Array.isArray(data)
+                let stories;
+                
+                if(result){
+                    stories = data.map(story=>{
 
-                    const storyId = story.id;
-                    const storyAuthorAvatar = story.user.avatar;
-                    const username = story.user.username;
+                        const storyId = story.id;
+                        const storyAuthorAvatar = story.user.avatar
+                        const username = story.user.username;
+    
+                        const createdTime = story.time;
+                        const modifiedTime = story.modified_time;
+                        const time = modifiedTime > createdTime ? modifiedTime + ' 已編輯' : createdTime
+                                    
+    
+                        const text = story.text;
+                        const likesNum = story.likes_num;
+                        const commentsNum = story.comments_num
+    
+                        let commentIputPlaceholder;
+                        if(loginStatus === "您已登入"){
+                            commentIputPlaceholder = '留言'
+                        } else{
+                            commentIputPlaceholder = loginStatus
+                        }
+    
+                        const displayCommentsDataUtils = storyId.concat('', '-displayComments')
+                        const imageUploadDataUtils = storyId.concat('', '-imageupload')
+                        const writecommentErrorUtils = storyId.concat('', '-writeerror')
+                        
+                        return `<div class="render-stories-wrap">
+                                    <a href="/user/profile/${username}"><img class="stories-avatar" src="${storyAuthorAvatar}"/></a>
+                                    <a href="/user/profile/${username}"><div class="stories-username">${username}</div></a>
+                                    <div class="stories-options" data-storyid="${storyId}" data-user="${username}">&ctdot;</div>
+                                    <div class="stories-time">${time}</div>
+                                    <div class="stories-text">${text}</div>
+                                    <div class="stories-image-wrapper"></div>
+                                    <div class="stories-likes" data-storyid="${storyId}">
+                                        <img src="/static/images/story/comment-like.png"/>
+                                        <p>${likesNum}</p>
+                                    </div>                                    
+                                    <div class="comment-nums" data-storyid="${storyId}" data-utils="${displayCommentsDataUtils}" data-commentsnum="${commentsNum}">${commentsNum} 則留言</div>
+                                    <div class="stories-click-like-comment-wrapper">
+                                        <div class="stories-click-like" data-storyid="${storyId}"><i class="fa-solid fa-heart"></i>&nbsp喜歡</div>
+                                        <div class="stories-click-comment" data-storyid="${storyId}" data-utils="${displayCommentsDataUtils}"><i class="fa-solid fa-comment"></i>&nbsp留言</div>
+                                    </div>
+                                    <div class="write-comment-wrapper">
+                                        <div class="comment-image-preview-wrapper"></div>
+                                        <a href="/user/profile/${username}"><img class="write-comment-avatar" src="${currentUserAvatar}"/></a>
+                                        <textarea class="write-comment-input-text" name="write-comment-input-text" placeholder="${commentIputPlaceholder}" data-storyid="${storyId}" autofocus></textarea>
+                                        <label class="form-image-content-label comment" for="${storyId}" data-utils="${imageUploadDataUtils}"><i class="fa-solid fa-image"></i></label>
+                                        <input type="file" accept="image/*" id="${storyId}" class="write-comment-input-image" name="write-comment-input-image"/>
+                                        <button class="write-comment-submit-btn" data-storyid="${storyId}">送出</button>
+                                        <div class="write-comment-errorblock" data-utils="${writecommentErrorUtils}">至少寫些文字嘛～</div>
+                                    </div>
+                                </div>`                        
+    
+                    }).join("");
 
-                    const createdTime = story.time;
-                    const modifiedTime = story.modified_time;
+                } else {
+
+                    const storyId = data.id;
+                    const storyAuthorAvatar = data.user.avatar
+                    const username = data.user.username;
+
+                    const createdTime = data.time;
+                    const modifiedTime = data.modified_time;
                     const time = modifiedTime > createdTime ? modifiedTime + ' 已編輯' : createdTime
                                 
 
-                    const text = story.text;
-                    const likesNum = story.likes_num;
-                    const commentsNum = story.comments_num
+                    const text = data.text;
+                    const likesNum = data.likes_num;
+                    const commentsNum = data.comments_num
 
                     let commentIputPlaceholder;
                     if(loginStatus === "您已登入"){
@@ -243,45 +337,43 @@ class Story{
                     const imageUploadDataUtils = storyId.concat('', '-imageupload')
                     const writecommentErrorUtils = storyId.concat('', '-writeerror')
                     
-                    return `<div class="render-stories-wrap">
-                                <a href="/user/profile/${username}"><img class="stories-avatar" src="${storyAuthorAvatar}"/></a>
-                                <a href="/user/profile/${username}"><div class="stories-username">${username}</div></a>
-                                <div class="stories-options" data-storyid="${storyId}">&ctdot;</div>
-                                <div class="stories-time">${time}</div>
-                                <div class="stories-text">${text}</div>
-                                <div class="stories-image-wrapper"></div>
-                                <div class="stories-likes" data-storyid="${storyId}">
-                                    <img src="../static/images/story/comment-like.png"/>
-                                    <p>${likesNum}</p>
-                                </div>                                    
-                                <div class="comment-nums" data-storyid="${storyId}" data-utils="${displayCommentsDataUtils}" data-commentsnum="${commentsNum}">${commentsNum} 則留言</div>
-                                <div class="stories-click-like-comment-wrapper">
-                                    <div class="stories-click-like" data-storyid="${storyId}"><i class="fa-solid fa-heart"></i>&nbsp喜歡</div>
-                                    <div class="stories-click-comment" data-storyid="${storyId}" data-utils="${displayCommentsDataUtils}"><i class="fa-solid fa-comment"></i>&nbsp留言</div>
-                                </div>
-                                <div class="write-comment-wrapper">
-                                    <div class="comment-image-preview-wrapper"></div>
-                                    <a href="/user/profile/${username}"><img class="write-comment-avatar" src="${currentUserAvatar}"/></a>
-                                    <textarea class="write-comment-input-text" name="write-comment-input-text" placeholder="${commentIputPlaceholder}" data-storyid="${storyId}" autofocus></textarea>
-                                    <label class="form-image-content-label comment" for="${storyId}" data-utils="${imageUploadDataUtils}"><i class="fa-solid fa-image"></i></label>
-                                    <input type="file" accept="image/*" id="${storyId}" class="write-comment-input-image" name="write-comment-input-image"/>
-                                    <button class="write-comment-submit-btn" data-storyid="${storyId}">送出</button>
-                                    <div class="write-comment-errorblock" data-utils="${writecommentErrorUtils}">至少寫些文字嘛～</div>
-                                </div>
-                            </div>`                        
+                    stories = `<div class="render-stories-wrap">
+                                    <a href="/user/profile/${username}"><img class="stories-avatar" src="${storyAuthorAvatar}"/></a>
+                                    <a href="/user/profile/${username}"><div class="stories-username">${username}</div></a>
+                                    <div class="stories-options" data-storyid="${storyId}" data-user="${username}">&ctdot;</div>
+                                    <div class="stories-time">${time}</div>
+                                    <div class="stories-text">${text}</div>
+                                    <div class="stories-image-wrapper"></div>
+                                    <div class="stories-likes" data-storyid="${storyId}">
+                                        <img src="/static/images/story/comment-like.png"/>
+                                        <p>${likesNum}</p>
+                                    </div>                                    
+                                    <div class="comment-nums" data-storyid="${storyId}" data-utils="${displayCommentsDataUtils}" data-commentsnum="${commentsNum}">${commentsNum} 則留言</div>
+                                    <div class="stories-click-like-comment-wrapper">
+                                        <div class="stories-click-like" data-storyid="${storyId}"><i class="fa-solid fa-heart"></i>&nbsp喜歡</div>
+                                        <div class="stories-click-comment" data-storyid="${storyId}" data-utils="${displayCommentsDataUtils}"><i class="fa-solid fa-comment"></i>&nbsp留言</div>
+                                    </div>
+                                    <div class="write-comment-wrapper">
+                                        <div class="comment-image-preview-wrapper"></div>
+                                        <a href="/user/profile/${username}"><img class="write-comment-avatar" src="${currentUserAvatar}"/></a>
+                                        <textarea class="write-comment-input-text" name="write-comment-input-text" placeholder="${commentIputPlaceholder}" data-storyid="${storyId}" autofocus></textarea>
+                                        <label class="form-image-content-label comment" for="${storyId}" data-utils="${imageUploadDataUtils}"><i class="fa-solid fa-image"></i></label>
+                                        <input type="file" accept="image/*" id="${storyId}" class="write-comment-input-image" name="write-comment-input-image"/>
+                                        <button class="write-comment-submit-btn" data-storyid="${storyId}">送出</button>
+                                        <div class="write-comment-errorblock" data-utils="${writecommentErrorUtils}">至少寫些文字嘛～</div>
+                                    </div>
+                                </div>`                        
 
-                }).join("");
+                }
+
 
                 // change different layout if page is not first loading
                 const allStoriesWrapper = []
 
-
                 if(page === 0){
-                    const selectedInsertElements = document.querySelectorAll('.stories-add-block');
-                    selectedInsertElements.forEach(element=>{
-                        element.insertAdjacentHTML('afterend', stories)
-    
-                    });
+
+                    const selectedInsertElements = document.querySelector('.stories-add-block');
+                    selectedInsertElements.insertAdjacentHTML('afterend', stories)
                     
                     const allStoriesWrapperWithLoaderClass = document.querySelectorAll('.render-stories-wrap')
     
@@ -322,25 +414,51 @@ class Story{
 
                 }
 
+                // insert photos
+                this.insertPhotos(response)
+
                 const nextPage = response.nextPage
                 scroll.page = nextPage 
 
-                // insert photos
-                this.insertPhotos(response)
+            })
+            .catch(error=>{
+                console.log(error)
+            })
+            .then(()=>{                
+
+                if(currentPathnameSplitted.includes('profile')){
+                    const fadeInele = document.querySelector('.stories-addblock-fadein-block')
+                    fadeInele.classList.add('profile')
+                    console.log("currentPathnameSplitted.includes('profile')")
+
+                    if(!currentPathnameSplitted.includes(currentUserName)){
+                        const storiesAddBlcokEle = document.querySelector('.stories-add-block');
+                        storiesAddBlcokEle.style.display = 'none'
+                        console.log('!currentPathnameSplitted.includes(currentUserName)')
+
+                    }
+                }
+
+                const storiesOptionsEles = document.querySelectorAll('.stories-options')
+                storiesOptionsEles.forEach(ele=>{
+                    if(ele.dataset.user !== currentUserName){
+                        ele.style.display = 'none'
+                    }
+                })
+
+                storyUtils.addCommentNumsListener()
+                storyUtils.addOptionListener()
+                storyUtils.addClickCommentListener()
+                refreshPhotoWrapperEleList()
+                addEventToAllPhotoWrapper()
+            
 
             })
             .catch(error=>{
                 console.log(error)
             })
             .then(()=>{
-
-                storyUtils.addCommentNumsListener()
-                storyUtils.addOptionListener()
-                storyUtils.addClickCommentListener()
-
-            })
-            .catch(error=>{
-                console.log(error)
+                renderStoreisFinished = true
             })
     };
 
@@ -351,12 +469,16 @@ class Story{
  
         let urls = []
 
-        response.data.forEach(res=>{
-            urls.push(res.photos)
-        })
+        if(Array.isArray(response.data)){
+            response.data.forEach(res=>{
+                urls.push(res.photos)
+            })
+        } else {
+            urls.push(response.data.photos)
+        }
+
 
         const normalizedURLs = urls.map(urls=>{
-
             let urllist = [];
 
             urls.forEach(url=>{
@@ -409,80 +531,23 @@ class Story{
 
 const story = new Story
 
-// save timer for photoWrapper
-let timer;
-
 // save nums of image wrappers
 let imageWrapperNums = 0;
-
 let loadedStoriesNums = 0;
-
 let storyWrappersCount = 0;
 
-
-function renderWholeStoryPage(page, keyword){
-    
-    const timer1 = window.setTimeout(()=>{
-
-        story.renderStories(page, keyword)
-
-        clearTimeout(timer1)
-    }, 100)
-
-    timer = window.setTimeout(()=>{
-
-        like.getLikesList({'userId': currentUserId})
-        .then(response=>{
-            like.changeLikeBtnsBgColorIfUserLiked(response)
-            likeUtils.addStoreisLikeBtnsClickListener()
-
-        })
-
-        refreshPhotoWrapperEleList()
-        addEventToAllPhotoWrapper()
-
-        // add other utils
-        storyUtils.hideOverExpandingTexts()
-        likeUtils.addStoreisLikesClickListener()
-
-        // add image-upload preivew feature
-        const imageContentInputBtn = document.querySelector('.form-image-content-input')
-        addPreviews({"imageContentInputBtn": imageContentInputBtn})
-
-        // add listener to add story submit button
-        const addBlockSubmitBtn = document.querySelectorAll('.addblock-submit-button')
-        addBlockSubmitBtn.forEach(btn=>{
-            btn.addEventListener('click', function add(){
-                story.addStory(currentUserId,imagesReadyForUploading)
-            })
-        })
-
-        clearTimeout(timer)
-
-    }, 1500)
-
-
-
-}
-
-// check if user is on story page. 
-// If true, trigger renderStories method
-
-if(currentPathnameSplitted.includes('stories') || currentPathnameSplitted.includes('profile')){
-
-    let page = 0;
-    let keyword = "";
-
-    renderWholeStoryPage(page, keyword)
-}
+// loading finished flag
+let renderStoreisFinished = false
+let postingActivitiesFinished = false
+let commentingActivitiesFinished = false
+let displayFollowingUsersActivitiesFinished = false
 
 const storyUtils = {
 
-    hideOverExpandingTexts(){
+    hideOverflowTexts(){
 
         document.querySelectorAll('.stories-text').forEach(ele=>{
-
-
+            
             if(ele.classList.length === 1){
 
                 const storyClientHeight = ele.clientHeight
@@ -734,7 +799,231 @@ const storyUtils = {
         })
     },
 
+    displayPostingActivities(page, user, keyword, followings){
+        
+        story.getStoryList(page, user, keyword, {'followings': followings, })
+        .then(response=>{
 
+            postingActivitiesFinished = true
+            
+            const rawData = response.data
+
+            const followingActivitiesHTML = rawData.map(data=>{
+
+                data.forEach(data=>{
+                    const id = data.id
+                    const avatar = data.user.avatar
+                    const username = data.user.username
+                    const time = data.time
+                    const text = data.text
+    
+                    const HTML = `
+                                <div class="info-block-wrapper" data-id="${id}">
+                                    <img class="infoblock-avatar" src="${avatar}"/>
+                                    <div class="infoblock-username">${username}</div>
+                                    <div class="infoblock-time">${time}</div>
+                                    <div class="infoblock-message">分享故事：「${text}」</div> 
+                                </div>
+                                `
+                    if(document.querySelector('.info-block')){
+                        document.querySelector('.info-block').insertAdjacentHTML('afterbegin', HTML)
+                    } else {
+                        document.querySelector('.profile-info-block').insertAdjacentHTML('afterbegin', HTML)
+                    }
+                })
+            })
+
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+    },
+
+    displayCommentingActivities(followings){
+        
+        comment.getComments({'followings': followings,})
+        .then(response=>{
+            
+            commentingActivitiesFinished = true
+
+
+            if(response && response.data.length !== 0){
+
+                const rawData = response.data
+
+                rawData.forEach(data=>{
+
+                    if (data && data.length !== 0){
+
+                        data.forEach(data=>{
+
+                            const id = data.id
+                            const avatar = data.user.avatar
+                            const username = data.user.username
+                            const time = data.time
+                            const text = data.text
+            
+                            const HTML = `
+                                        <div class="info-block-wrapper" data-id="${id}">
+                                            <img class="infoblock-avatar" src="${avatar}"/>
+                                            <div class="infoblock-username">${username}</div>
+                                            <div class="infoblock-time">${time}</div>
+                                            <div class="infoblock-message">在一則故事中留言：「${text}」</div> 
+                                        </div>
+                                        `
+                            if(document.querySelector('.info-block')){
+                                document.querySelector('.info-block').insertAdjacentHTML('afterbegin', HTML)
+                            } else {
+                                document.querySelector('.profile-info-block').insertAdjacentHTML('afterbegin', HTML)
+                            }
+
+                        })
+                    }                   
+                })
+
+
+            } 
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+    },
+
+    addEventListenerOnEveryNotification(){
+        document.querySelectorAll('.info-block-wrapper').forEach(ele=>{
+            ele.onclick = () => {
+                window.location.href = `/stories/${ele.dataset.id}/`
+            }
+        })
+    },
+
+    addEventListenerOnNotificationBtn(){
+
+        document.querySelector('.navNotificationBtn').onclick = debounce(()=>{
+
+            const storiesInfoBlock = document.querySelector('.info-block')
+            const profileInfoBlock = document.querySelector('.profile-info-block')
+            if(storiesInfoBlock){
+                storiesInfoBlock.classList.add('mobile')
+                this.addEventListenerOnEveryNotification()
+            } else {
+                profileInfoBlock.classList.add('mobile')
+                this.addEventListenerOnEveryNotification()
+            }
+
+            const mobilestoriesInfoBlock = document.querySelector('.info-block.mobile')
+            const mobileProfileInfoBlock = document.querySelector('.profile-info-block.mobile')
+            if(mobilestoriesInfoBlock){
+                document.addEventListener('click', event=>{
+                    if(!mobilestoriesInfoBlock.contains(event.target)){
+                        mobilestoriesInfoBlock.classList.remove('mobile')
+                    }
+                })
+            } else {
+                document.addEventListener('click', event=>{
+                    if(!mobileProfileInfoBlock.contains(event.target)){
+                        mobileProfileInfoBlock.classList.remove('mobile')
+                    }
+                })
+            }
+
+        }, 250)
+    },
+
+    displayFollowingUsersActivities(){
+
+        const storiesInfoBlock = document.querySelector('.info-block')
+        const profileInfoBlock = document.querySelector('.profile-info-block')
+
+        const activitiesData = JSON.parse(localStorage.getItem(currentUserName))
+
+        let followings;
+        if(activitiesData){
+            followings = activitiesData.followingData.followingList.map(following=>{return following.user_id})
+        } 
+
+        let page;
+        let user;
+        let keyword;
+
+        if(storiesInfoBlock && localStorage.getItem('token') && followings !== undefined){
+
+            if(followings.length === 0){
+                const html = `<div class="infoblock-empty-message">追蹤者們最近沒有新的動態～</div>`
+                storiesInfoBlock.insertAdjacentHTML('afterbegin', html)
+                document.querySelector('.infoblock-empty-message').style.display = "block"
+
+            }
+
+            this.displayPostingActivities(page, user, keyword, followings)
+            this.displayCommentingActivities(followings)
+
+        } else if(profileInfoBlock && localStorage.getItem('token') && followings !== undefined) {
+
+            if(followings.length === 0){
+                const html = `<div class="infoblock-empty-message">追蹤者們最近沒有新的動態～</div>`
+                profileInfoBlock.insertAdjacentHTML('afterbegin', html)
+                document.querySelector('.infoblock-empty-message').style.display = "block"
+
+            }
+            this.displayPostingActivities(page, user, keyword, followings)
+            this.displayCommentingActivities(followings)
+
+
+        } else {
+
+            [storiesInfoBlock, profileInfoBlock].forEach(ele=>{
+                if(ele && localStorage.getItem('token')){
+
+                    postingActivitiesFinished = true
+                    commentingActivitiesFinished = true
+
+                    const html = `<div class="infoblock-empty-message">追蹤者們最近沒有新的動態～</div>`
+                    ele.insertAdjacentHTML('afterbegin', html)
+                    document.querySelector('.infoblock-empty-message').style.display = "block"
+
+
+                } else if (ele && currentPathnameSplitted[3] !== currentUserName){
+
+                    ele.remove()
+                    document.querySelector('.stories-add-block').style.display = 'none'
+
+                } else if (ele){
+
+                    postingActivitiesFinished = true
+                    commentingActivitiesFinished = true
+
+                    const html = `<div class="infoblock-empty-message">請先登入以獲得追蹤者最新動態～</div>`
+                    ele.insertAdjacentHTML('afterbegin', html)
+                    document.querySelector('.infoblock-empty-message').style.display = "block"
+
+
+                }
+
+            })
+        }
+
+        const interval = window.setInterval(()=>{
+            
+            if(postingActivitiesFinished === true && commentingActivitiesFinished === true){
+                
+                clearInterval(interval)
+
+                if(window.innerWidth >= 1200){
+                    storyUtils.addEventListenerOnEveryNotification()
+                } else {
+                    storyUtils.addEventListenerOnNotificationBtn()
+                }
+
+                displayFollowingUsersActivitiesFinished = true
+
+                console.log('ready')
+
+            } 
+
+        }, 100)
+
+    },
 
 
 }

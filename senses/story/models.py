@@ -94,5 +94,17 @@ class Like(models.Model):
     class Meta:
         db_table = 'Like'
 
+class Saved_Story(models.Model):
 
+    id = models.UUIDField(default=uuid.uuid4, unique=True, 
+                          primary_key=True, editable=False)
+    time = models.DateTimeField(default=timezone.now)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE, default=False, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.id)
+
+    class Meta:
+        db_table = 'Saved_Story'
 

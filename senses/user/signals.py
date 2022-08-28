@@ -3,7 +3,7 @@ from .models import User, Profile
 
 
 def delete_user(sender, instance, **kwargs):
-    user = instance.user
+    user = instance.user_id
     user.delete()
 
 def create_profile(sender, instance, created, **kwargs):

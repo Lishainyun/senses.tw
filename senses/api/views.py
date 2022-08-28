@@ -1,6 +1,7 @@
 from django.http import HttpResponse, QueryDict
-from django.db.models import Prefetch, Count
+from django.db.models import Prefetch, Count, Q
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -13,75 +14,144 @@ from .serializers import (
     ProfileSerializer, 
     StorySerializer, 
     StoryPhotoSerializer, 
+    SavedStorySerializer,
     CommentSerializer, 
     CommentPhotoSerializer,
     LikeSerializer,
+    FollowSerializer,
 )
 
 from senses.settings import SECRET_KEY
-import jwt, datetime, json
+from . import tasks
+import logging, jwt, datetime, json, redis, os
 
+REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
+redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0, password=REDIS_PASSWORD)
 
 @api_view(['GET'])
 def get_users_list(request):
 
-    if request.method == 'GET':
-        try:  
-            users = User.objects.all()
-            serializer = UserSerializer(users, many=True)
+    try:  
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
 
-            return Response(serializer.data, 200)
-        except:
-            error = {"error": True, 
-                    "message": "Request failed."}
-            return Response(error, 400)
-
-@api_view(['GET'])
-def get_user(request, pk):
-
-    if request.method == 'GET':
-        try:
-            user = User.objects.get(id=pk)
-            serializer = UserSerializer(user, many=False)
-
-            return Response(serializer.data, 200)
-        except:
-            error = {"error": True, 
-                    "message": "Request failed."}
-            return Response(error, 400)
-
-@api_view(['GET'])
-def get_profile(request, username):
-    try:
-        profile = Profile.objects.get(username=username)
-        serializer = ProfileSerializer(profile, many=False)
         return Response(serializer.data, 200)
     except:
         error = {"error": True, 
                 "message": "Request failed."}
         return Response(error, 400)
 
-@api_view(['PATCH'])
-def patch_profile(request):
+@api_view(['GET'])
+def get_user(request, pk):
+
+    try:
+        user = User.objects.get(id=pk)
+        serializer = UserSerializer(user, many=False)
+
+        return Response(serializer.data, 200)
+    except:
+        error = {"error": True, 
+                "message": "Request failed."}
+        return Response(error, 400)
+
+@api_view(['GET'])
+def get_profile(request, username):
     
-    if request.method == 'PATCH':
+    profile_key = f'{username}_profile'
+    redis_cached_data = redis_client.get(profile_key)
+
+    if redis_cached_data is not None:
+
+        data = json.loads(redis_cached_data)
+
+        print('Successfully get data from redis')
+        return Response(data, 200)
+    
+    else:
+
         try:
-            data = request.data
-            token = data['token']
-            user_id = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])['user_id']
-
-            profile = Profile.objects.get(user_id=user_id)
+            profile = Profile.objects.get(username=username)
             serializer = ProfileSerializer(profile, many=False)
+            data = serializer.data
 
-            return Response(serializer.data, 200)
+            # cache
+            redis_client.set(profile_key, json.dumps(data))
+            redis_client.expire(profile_key, datetime.timedelta(days=1))
+            print('Successfully set data into redis')
+            
+            return Response(data, 200)
+
         except:
-            error = {"error": True, 
-                    "message": "Request failed."}
+            error = {"error": True, "message": "Request failed."}
             return Response(error, 400)
 
 
-    # else if request.method == 'DELETE':
-    #     try:
+@api_view(['PATCH'])
+def login_profile(request):
+    
+    try:
+        data = request.data
+        token = data['token']
+        user_id = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])['user_id']
+
+        profile = Profile.objects.get(user_id=user_id)
+        serializer = ProfileSerializer(profile, many=False)
+
+        return Response(serializer.data, 200)
+    except:
+        error = {"error": True, 
+                "message": "Request failed."}
+        return Response(error, 400)
+
+
+@api_view(['PATCH'])
+def edit_profile(request):
+    
+    try:
+        plaintext_data = request.POST
+
+        user_id = plaintext_data['userId']
+        username = plaintext_data['username']
+        intro = plaintext_data['intro']
+        bio = plaintext_data['bio']
+        
+        profile = Profile.objects.get(user_id=user_id)
+
+        if username:
+            profile.username = username
+
+        if intro:
+            profile.intro = intro
+        
+        if bio:
+            profile.bio = bio
+ 
+        bg_list = request.FILES.getlist('bg')
+        if len(bg_list) != 0:
+            bg = request.FILES.getlist('bg')[0]
+            profile.background_image = bg
+
+        avatar_list = request.FILES.getlist('avatar')
+        if len(avatar_list) != 0:
+            avatar = request.FILES.getlist('avatar')[0]
+            profile.avatar = avatar
+
+        profile.save()
+
+        serializer = ProfileSerializer(profile, many=False)
+        data = serializer.data
+
+        # cache
+        profile_key = f'{username}_profile'
+        redis_client.set(profile_key, json.dumps(data))
+        redis_client.expire(profile_key, datetime.timedelta(days=1))
+
+        return Response({'success': True, 'data': data}, 200)
+    except:
+        error = {"error": True, 
+                "message": "Request failed."}
+        return Response(error, 400)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -110,58 +180,128 @@ def add_story(request):
         error = {"error": True, "message": "Request failed."}
         return Response(error, 400)
 
-@api_view(['GET'])
+@api_view(['GET', 'PATCH'])
 def get_stories_list(request):
 
     page = request.GET.get('page')
     keyword = request.GET.get('keyword')
     user_id = request.GET.get('user')
+    current_location = request.GET.get('currentLocation')    
+    current_location_username = request.GET.get('currentLocationUsername')    
 
-    if page and (keyword == "") :
+    if request.method == 'GET':
+        if page and (keyword == "") :
 
-        offset = int(page) * 12
-        next_page = int(page) + 1
+            offset = int(page) * 12
+            next_page = int(page) + 1
 
-        try: 
+            try: 
 
-            stories = Story.objects.all().order_by('-time')[offset:offset+13]
-            result_length = len(stories)
-            serializer = StorySerializer(stories[0:12], many=True)
+                if current_location == 'story':
+                    stories = Story.objects.all().order_by('-time')[offset:offset+13]
+                else:
+                    stories = Story.objects.select_related('user').filter(user__username=current_location_username).all().order_by('-time')[offset:offset+13]
 
-            all_selected_stories_id_set = set([story['id'] for story in serializer.data])
-            all_currentuser_likes_story_id_set = set([str(story) for story in list(
-                                            Like.objects.select_related('story')
-                                            .select_related('user__user_id')
-                                            .filter(user__user_id__id=user_id)
-                                            .values_list('story', flat=True)
-                                            )])
+                result_length = len(stories)
+                serializer = StorySerializer(stories[0:12], many=True)
 
-            selectedStoriesIdListOfcurrentUserLikes = list(all_currentuser_likes_story_id_set.intersection(
-                                                        all_selected_stories_id_set
-                                                    ))
+                if user_id != 'undefined':
+                    all_selected_stories_id_set = set([story['id'] for story in serializer.data])
+                    all_currentuser_likes_story_id_set = set([str(story) for story in list(
+                                                    Like.objects.select_related('story')
+                                                    .select_related('user__user_id')
+                                                    .filter(user__user_id__id=user_id)
+                                                    .values_list('story', flat=True)
+                                                    )])
+
+                    selectedStoriesIdListOfcurrentUserLikes = list(all_currentuser_likes_story_id_set.intersection(
+                                                                        all_selected_stories_id_set
+                                                                    ))                                
+                else:
+                    selectedStoriesIdListOfcurrentUserLikes = ""
 
 
-            if result_length >= 13:
+                if result_length >= 13:
 
-                return Response({'nextPage': next_page, 'data':serializer.data, 
-                                'selectedStoriesIdListOfcurrentUserLikes': selectedStoriesIdListOfcurrentUserLikes}, 200)
+                    return Response({'nextPage': next_page, 'data':serializer.data, 
+                                    'selectedStoriesIdListOfcurrentUserLikes': selectedStoriesIdListOfcurrentUserLikes}, 200)
+                    
+                elif result_length < 13:
+
+                    return Response({'nextPage': None, 'data':serializer.data,
+                                    'selectedStoriesIdListOfcurrentUserLikes': selectedStoriesIdListOfcurrentUserLikes}, 200)
+
+                else:
+
+                    return Response({'error': True, 'message':'There is no page requested.'}, 400)
+
+            except:
+
+                return Response({"error": True, "message": "Request failed."}, 400)
+
+        else:
+
+            try: 
+                selected_story = ""
+                story_result = Story.objects.filter(pk=keyword).exists()
                 
-            elif result_length < 13:
+                if(story_result):
+                    selected_story = Story.objects.get(pk=keyword)
+                    
+                else:
+                    selected_comment_storyId = Comment.objects.get(pk=keyword).story_id.id
+                    selected_story = Story.objects.get(pk=selected_comment_storyId)
 
-                return Response({'nextPage': None, 'data':serializer.data,
+                serializer = StorySerializer(selected_story, many=False)
+
+                if user_id != 'undefined':
+                    selected_story_id = set([keyword])
+                    all_currentuser_likes_story_id_set = set([str(story) for story in list(
+                                                    Like.objects.select_related('story')
+                                                    .select_related('user__user_id')
+                                                    .filter(user__user_id__id=user_id)
+                                                    .values_list('story', flat=True)
+                                                    )])
+
+                    selectedStoriesIdListOfcurrentUserLikes = list(all_currentuser_likes_story_id_set.intersection(
+                                                                        selected_story_id
+                                                                    ))
+                                                        
+                else:
+                    selectedStoriesIdListOfcurrentUserLikes = ""
+
+                return Response({'nextPage': None, 'data':serializer.data, 
                                 'selectedStoriesIdListOfcurrentUserLikes': selectedStoriesIdListOfcurrentUserLikes}, 200)
 
-            else:
+            except:
 
-                return Response({'error': True, 'message':'There is no page requested.'}, 400)
+                return Response({"error": True, "message": "Request failed."}, 400)
 
+    
+    else:
+        data = json.loads(request.body)['followings']
+        stories = []
+
+        current_datetime = timezone.now()
+        time_limit = current_datetime - datetime.timedelta(days=1)
+
+        try:
+            for following in data:
+
+                lookup = (Q(user__user_id=following) & Q(time__gte=time_limit))
+
+                story = Story.objects.select_related('user').filter(lookup).order_by('-time')
+
+                serializer = StorySerializer(story, many=True)
+                stories.append(serializer.data)
+            
+            return Response({'success': True, 'data': stories}, 200)   
+            
         except:
 
-            return Response({"error": True, "message": "Request failed."}, 400)
+            return Response({'error': True, 'message': 'Failed retrieving stories of following users.'}, 200)   
 
-    # elif page and keyword: 
 
-    #     try:
 
 @api_view(['GET', 'PATCH', 'DELETE'])
 @permission_classes([IsAuthenticated])
@@ -220,14 +360,15 @@ def handle_single_story(request, pk):
                     "message": "Something went wrong."}
             return Response(error, 400)
 
-@api_view(['GET'])
+@api_view(['GET', 'PATCH'])
 def get_comments_list(request):
 
     story_id = request.GET.get('storyId')
     comment_id = request.GET.get('commentId')
-    page = int(request.GET.get('page'))
 
     if story_id and (comment_id is None) :
+
+        page = int(request.GET.get('page'))
 
         offset = page * 12
         next_page = page + 1
@@ -271,6 +412,8 @@ def get_comments_list(request):
             return Response({"error": True, "message": "Request failed."}, 400)
 
     elif (story_id is None) and comment_id: 
+        
+        page = int(request.GET.get('page'))
 
         offset = page * 12
         next_page = page + 1
@@ -312,7 +455,27 @@ def get_comments_list(request):
 
     elif (story_id is None) and (comment_id is None): 
 
-        return Response({"error": True, "message": "Miss parameters."}, 400)
+        data = json.loads(request.body)['followings']
+        comments = []
+
+        current_datetime = timezone.now()
+        time_limit = current_datetime - datetime.timedelta(days=1)
+
+        try:
+            for following in data:
+
+                lookup = (Q(user__user_id=following) & Q(time__gte=time_limit))
+
+                comment = Comment.objects.select_related('user').filter(lookup).order_by('-time')
+
+                serializer = CommentSerializer(comment, many=True)
+                comments.append(serializer.data)
+            
+            return Response({'success': True, 'data': comments}, 200)   
+            
+        except:
+
+            return Response({'error': True, 'message': 'Failed retrieving comments of following users.'}, 200)          
 
     else: 
 
@@ -479,20 +642,37 @@ def get_likes_list(request):
 
     elif user_id: 
 
-        try:
+        user_likeslist_key = f'{user_id}_likeslist'
+        redis_cached_data = redis_client.get(user_likeslist_key)
 
-            likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
-            serializer = LikeSerializer(likes, many=True)
+        if redis_cached_data is not None:
 
-            return Response({"success": True, "data": serializer.data}, 200)
+            data = json.loads(redis_cached_data)
 
-        
-        except ObjectDoesNotExist:
+            print('get user_likeslist from redis')
+            return Response({"success": True, "data": data}, 200)
 
-            error = {"error": True, 
-                    "message": "User is not exists."}
+        else:
 
-            return Response(error, 400)
+            try:
+
+                likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
+                serializer = LikeSerializer(likes, many=True)
+                data = serializer.data
+
+                user_likeslist_key = f'{user_id}_likeslist'
+                redis_client.set(user_likeslist_key, json.dumps(data))
+                redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
+
+                return Response({"success": True, "data": data}, 200)
+
+            
+            except ObjectDoesNotExist:
+
+                error = {"error": True, 
+                        "message": "User is not exists."}
+
+                return Response(error, 400)
     else: 
 
         return Response({"error": True, "message": "Necessary parameters not given."}, 400)
@@ -519,6 +699,9 @@ def add_like(request):
 
         serializer = LikeSerializer(like, many=False)
         data = serializer.data
+
+        # renew cache
+        tasks.get_user_likeslist.delay(user_id)  
 
         success = {"success": True, "message": "Add like successfully.", "data": data}
         return Response(success, 200)
@@ -549,13 +732,144 @@ def handle_single_like(request):
     else:
         try:
             if story_id != "null":
-                like = Like.objects.select_related('story').filter(story__id=story_id).select_related('user').get(user__user_id=user_id)
-                like.delete()
+
+                tasks.delete_like.delay(story_id, user_id)
+
                 return Response({"success": True, "message": "Delete like successfully."}, 200)
+
             else:
-                like = Like.objects.select_related('comment').filter(comment__id=comment_id).select_related('user').get(user__user_id=user_id)
-                like.delete()
+
+                tasks.delete_like.delay(comment_id, user_id)
+                
                 return Response({"success": True, "message": "Delete like successfully."}, 200)
+
+        except:
+            error = {"error": True, "message": "Deleting like failed."}
+            return Response(error, 400)
+
+@api_view(['GET'])
+def get_follows_list(request):
+
+    username = request.GET.get('user')
+
+    follows_key = f'{username}_follows'
+    redis_cached_data = redis_client.get(follows_key)
+
+    if redis_cached_data is not None:
+
+        data = json.loads(redis_cached_data)
+
+        print('Successfully get get_follows_list from redis')
+        return Response({"success": True, "data": data}, 200)
+
+    else:
+
+        try: 
+            print('get follows list ', username)
+            lookup = (Q(follower__username=username) | Q(following__username=username))
+            follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
+
+            serializer = FollowSerializer(follow, many=True)
+            all_data = serializer.data
+
+            follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == username]
+            following_list = [dict(dict(data)['following']) for data in all_data if dict(dict(data)['follower'])['username'] == username]
+
+            follower_list_length = len(follower_list)
+            following_list_length = len(following_list)
+            
+            data = {
+                "followerData": {
+                    "followerList": follower_list,
+                    "length": follower_list_length, 
+                },
+                "followingData": {
+                    "followingList": following_list,
+                    "length": following_list_length,
+                },
+            }
+            
+            # cache
+            follows_key = f'{username}_follows'
+            redis_client.set(follows_key, json.dumps(data))
+            redis_client.expire(follows_key, datetime.timedelta(days=1))
+            
+            return Response({"success": True, "data": data}, 200)
+
+        except:
+
+            return Response({"error": True, "message": "Request failed."}, 400)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_follow(request):
+
+    request_data = json.loads(request.body)
+
+    follower = request_data["follower"]
+    following = request_data["following"]
+    username = request_data["username"]
+    time = datetime.datetime.now()
+
+    try:
+
+        follow = Follow.objects.create(
+            time=time,
+        )
+
+        follower = Profile.objects.get(username=follower)
+        follow.follower = follower
+
+        following = Profile.objects.get(username=following)
+        follow.following = following
+
+        follow.save()
+
+        serializer = FollowSerializer(follow, many=False)
+        data = serializer.data
+
+        # cache
+        tasks.get_follows_list.delay(username)      
+
+        success = {"success": True, "message": "Follow successfully.", "data": data}
+        return Response(success, 200)
+
+    except:
+        error = {"error": True, "message": "Request failed."}
+        return Response(error, 400)
+
+@api_view(['GET', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def handle_single_follow(request):
+
+    follower = request.GET.get('follower')
+    following = request.GET.get('following')
+    username = request.GET.get('username')
+
+
+    if request.method == 'GET':
+        try:
+            follow = Follow.objects.select_related('follower').filter(
+                follower__username=follower
+                ).select_related('following').get(
+                    following__username=following
+                    )
+
+            serializer = FollowSerializer(follow, many=False)
+            return Response({"success": True, "data": serializer.data}, 200)
+
+        except ObjectDoesNotExist:
+            error = {"error": True, 
+                    "message": "The user has not followed this user yet."}
+            return Response(error, 400)
+    
+    else:
+        try:
+
+            tasks.unfollow.delay(follower, following, username)
+
+            return Response({"success": True, "message": "Unfollow successfully."}, 200)
+
 
         except:
             error = {"error": True, "message": "Deleting like failed."}

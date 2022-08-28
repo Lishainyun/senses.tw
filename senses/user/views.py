@@ -4,17 +4,19 @@ from main.models import Main
 from .models import Profile, ProfileManager
 from .forms import RegisterForm
 
+from django.http import HttpResponse
+
 def profile_entry_view(request):
 
     sitename = Main.objects.get(pk=1).name
 
     return render(request, 'profileEntry.html', {'sitename':sitename})
 
-def profile_view(request, username):
+def profile_view(request):
 
     sitename = Main.objects.get(pk=1).name
 
-    return render(request, 'profile.html', {'sitename':sitename, 'username':username})
+    return render(request, 'profile.html', {'sitename':sitename})
 
 
 def register_view(request):

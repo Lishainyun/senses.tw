@@ -36,10 +36,10 @@ class Scroll{
     }
 
     renderContent = () => {
-        console.log(this.page)
+        
         if(this.page !== null){
             renderWholeStoryPage(this.page, this.keyword) // function from story.js
-        } else {
+        } else if (currentPathnameSplitted[1] === 'stories' && !currentPathnameSplitted[2]) {
             this.renderMessage()
         }
 

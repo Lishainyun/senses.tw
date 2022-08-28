@@ -5,6 +5,7 @@ let imagesReadyForUploading = [];
 let commentImageReadyForUploading;
 let commentImageOnCommentReadyForUploading;
 let commentImageBlobURL;
+let addPreviewsFinished = false
 
 function addPreviews(kwargs){
 
@@ -48,8 +49,9 @@ function addPreviews(kwargs){
                 deletePreviews(event, {'imageContentInputBtn':imageContentInputBtn})
             }   
         }
-    }
 
+        addPreviewsFinished = true
+    }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////// comment image ////////////////////////////////////////
@@ -109,6 +111,8 @@ function addPreviews(kwargs){
                 deletePreviews(event, {'commentImageInputBtn':kwargs.commentImageInputBtn})
             }
         })
+
+        addPreviewsFinished = true
 
     }
 
@@ -170,6 +174,8 @@ function addPreviews(kwargs){
                 deletePreviews(event, {'commentOfCommentImageInputBtn':kwargs.commentOfCommentImageInputBtn})
             }
         })
+        
+        addPreviewsFinished = true
 
     }    
 

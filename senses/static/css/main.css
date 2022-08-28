@@ -105,17 +105,12 @@ img[src*="logo_1_black.png"]{
     flex: 1;
 }
 
-img[src*="search.png"], img[src*="message.png"], img[src*="stories_new.png"]{
+img[src*="notification.png"], img[src*="stories_new.png"]{
     cursor:pointer;
     transform: translate(0px, 2px);
 }
 
-img[src*="search.png"]{
-    width: 35px;
-    height: 35px;
-}
-
-img[src*="message.png"]{
+img[src*="notification.png"]{
     width: 35px;
     height: 35px;
 }
@@ -188,37 +183,6 @@ img[src*="stories_new.png"]{
     .right-content-pc{
         flex: 1;
         height: 60px;
-    }
-
-    /*///////////search icon setting///////////////*/
-    .search-icon{
-        position: fixed;
-        height:28px;
-        transform:translate(-175px, 16px);
-        z-index: 2;
-    }
-
-    .search-icon.has-click{
-        transform:translate(186px, 16px);
-        cursor: pointer;
-        animation: click-search-icon 1s ease-in-out;
-    }
-
-    @keyframes click-search-icon {
-        from{
-            transform: translate(-175px, 16px) rotate(0deg)
-        }
-        to{
-            transform: translate(186px, 16px) rotate(360deg)
-        }
-    }
-
-    .search-bar{
-        height: 30px;
-        padding: 0 0 0 30px;
-        border-radius: 40px;
-        transform: translate(110px, 15px);
-        flex: 1;
     }
 
     .status-off{

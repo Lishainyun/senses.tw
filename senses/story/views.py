@@ -8,3 +8,7 @@ def stories_view(request):
     sitename = Main.objects.get(pk=1).name
 
     return render(request, 'story.html', {'sitename':sitename})
+
+def single_story_view(request, pk):
+
+    return render(request, 'singleStory.html')

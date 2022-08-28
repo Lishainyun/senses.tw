@@ -1,18 +1,120 @@
-/*////////////////////////////////////
-[For mobile phones]*/
+*{
+	box-sizing: border-box;
+}
 
-.layout{
-    width:95%;
-    margin:auto;
+body{
+	margin: 0;
+    font-family: 'jf-openhuninn-1.1', 'Poppins', sans-serif;
+    background-color: #e8e8e8;
+}
+
+a{
+    text-decoration: none;
+}
+
+a:link {
+    color: white;
+    width: 30%;
+    text-align: center;
+    margin-bottom: 20px;
+    height: 30px;
+    border-radius: 10px;
+    line-height: 30px;
+}
+
+a[href*="login"]{
+    background-color: #015096;
+    margin-right: 0px;
+    width: 50%;
+}
+
+a[href*="register"]{
+    text-decoration: underline;
+    color: #757575;
+    margin-left: 0px;
+    width: 50%;
+}
+
+a[href*="login"]:hover{
+    background-color: #015baa;
+}
+
+a[href*="register"]:hover{
+    color: #AAAAAA;
+}
+  
+/* visited link */
+a:visited {
+    color: black;
+}
+  
+/* selected link */
+a:active {
+    color: black;
 }
 
 /*////////////////////////////////////
-[For pc]*/
+[For mobile]*/
+
+body{
+    background-image: url(/static/images/user/user_background_mobile.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.wrapper{
+    margin: auto;
+    border-top: 10px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 20px #AAAAAA;
+    background-color: #FFFFFF;
+    width: 90%;
+    opacity: 0.85;
+    transform: translate(0px, 150px);
+}
+
+.btn-wrapper{
+    display: flex;
+    width: 60%;
+    margin: auto;
+}
+
+.title{
+    background-color: #fdb338;
+    color:#FFFFFF;
+    text-align:center;
+    font-size: 18px;
+    font-weight: 400;
+    padding: 7px;
+    border-radius: 10px 10px 0 0;
+    margin:0 0 10px 0;
+}
+
+.slogan{
+    color: #757575 ;
+    text-align:center;
+    font-size: 14px;
+}
+
+/*////////////////////////////////////
+[For PC]*/
 @media screen and (min-width: 1201px){
-    .layout{
-        display: grid;
-        width:900px;
-        margin:auto;
-        grid-template-columns: 50px 450px 400px;
+
+    body{
+        background-image: url(/static/images/user/user_background_pc.jpg);
+        background-size: cover;
+        background-repeat: no-repeat;
     }
+
+    .wrapper{
+        margin: auto;
+        border-top: 10px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 20px #AAAAAA;
+        background-color: #FFFFFF;
+        width: 500px;
+        opacity: 0.85;
+        transform: translate(0, 150px);
+    }
+
 }

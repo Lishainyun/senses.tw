@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from user.models import User, Profile, Follow
-from story.models import Story, Story_Photo, Comment, Comment_Photo, Like
+from story.models import Story, Story_Photo, Comment, Comment_Photo, Like, Saved_Story
 from datetime import datetime
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
@@ -101,6 +101,28 @@ class LikeSerializer(DynamicFieldsModelSerializer):
     user = ProfileSerializer(many=False, fields=('user_id', 'username', 'avatar'))
     story = StorySerializer(many=False, fields=('id', ))
     comment = CommentSerializer(many=False, fields=('id', ))
+
+    class Meta:
+        model = Like
+        fields = '__all__'
+      
+class FollowSerializer(DynamicFieldsModelSerializer):
+
+    time = serializers.SerializerMethodField(method_name="get_formatted_time_datetime")
+    follower = ProfileSerializer(many=False, fields=('user_id', 'username', 'avatar'))
+    following = ProfileSerializer(many=False, fields=('user_id', 'username', 'avatar'))
+
+    class Meta:
+        model = Follow
+        fields = '__all__'
+
+    def get_formatted_time_datetime(self, obj):
+        return obj.time.strftime('%Y/%m/%d %H:%M:%S')
+
+class SavedStorySerializer(DynamicFieldsModelSerializer):
+
+    user = ProfileSerializer(many=False, fields=('user_id', 'username', 'avatar'))
+    story = StorySerializer(many=False)
 
     class Meta:
         model = Like

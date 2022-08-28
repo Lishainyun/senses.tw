@@ -2,8 +2,10 @@
 
 let photoWrapperEleList = [];
 let xAnchorPoint;
-let locked = false;
 let windowInnerWidth;
+let locked = false;
+
+let addEventToAllPhotoWrapperReady = false
 
 const refreshPhotoWrapperEleList = function(){
 
@@ -25,7 +27,6 @@ function lock(photoWrapperEle){
         xAnchorPoint = unify(event).clientX
         photoWrapperEle.classList.toggle('smooth', !(locked = true))
     }
-
 };
 
 window.addEventListener('resize', getWindowInnerWidth, false)
@@ -136,19 +137,7 @@ const addEventToAllPhotoWrapper = function(){
             photoWrapperEle.classList.add('has-no-image')
         }
 
-    }) 
-
-    closeLoader()
-
-    //display rendered stories wrapper
-    const storiesBlock = document.querySelector('.stories-block')
-    storiesBlock.style.display = 'block'
-
-    const storiesWrap = document.querySelectorAll('.render-stories-wrap')
-    storiesWrap.forEach(ele=>{
-        ele.style.display = 'block'
-
-    })
+    })    
 
 }
 

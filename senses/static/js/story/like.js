@@ -119,6 +119,10 @@ class Like{
             // insert users
             const eleForInsertingLikeslist = document.querySelector('.likeslist-wrapper')
 
+            if(currentPathnameSplitted.includes('profile')){
+                eleForInsertingLikeslist.classList.add('profile')
+            }
+
             data.forEach(data=>{
                 const username = data.user.username
                 const avatar = data.user.avatar
@@ -207,6 +211,8 @@ class Like{
                 }
             })
 
+            changeLikeBtnsBgColorIfUserLikedFinished = true
+
         } else {
 
             const commentLikeBtnEles = document.querySelectorAll('.comment-like')
@@ -216,6 +222,7 @@ class Like{
                 }        
             })
 
+            changeLikeBtnsBgColorIfUserLikedFinished = true
         }
     }
 
@@ -225,6 +232,9 @@ const like = new Like()
 
 let LikeidPagePairs = {}
 let currentUserLikesList = []
+let changeLikeBtnsBgColorIfUserLikedFinished = false
+let addStoreisLikeBtnsClickListenerFinished = false
+let addStoreisLikesClickListenerFinished = false
 
 
 const likeUtils = {
@@ -248,8 +258,10 @@ const likeUtils = {
                 }
 
 
-            }, 500))
+            }, 250))
         })
+
+        addStoreisLikesClickListenerFinished = true
     },
 
     addCommentsLikesClickListener: () => {
@@ -272,7 +284,7 @@ const likeUtils = {
                 }
 
 
-            }, 500))
+            }, 250))
         })
     },
 
@@ -297,7 +309,7 @@ const likeUtils = {
                 }
 
 
-            }, 500))
+            }, 250))
         })
     },
 
@@ -330,6 +342,8 @@ const likeUtils = {
                         "storyId": storyId,
                         "userId": userId
                     })
+
+
                 } else {
                     currentUserLikesList.push(storyId)
 
@@ -341,11 +355,15 @@ const likeUtils = {
                         "storyId": storyId,
                         "userId": userId,
                     })
+
                 }
 
             },250)
 
         })
+
+        addStoreisLikeBtnsClickListenerFinished = true
+
     },
 
     addCommentsLikeBtnsClickListener: () => {
@@ -400,5 +418,21 @@ const likeUtils = {
         })
 
     },
+
+    getUserLikeslist(){
+
+        like.getLikesList({'userId': currentUserId})
+        .then(response=>{
+            console.log(response)
+            localStorage.setItem('likeslist', JSON.stringify(response.data))
+            
+            like.changeLikeBtnsBgColorIfUserLiked(response)
+            likeUtils.addStoreisLikeBtnsClickListener()
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+
+    }
 
 }

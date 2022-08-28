@@ -1,10 +1,10 @@
 "use strict"
 
-let loginStatus;
-let currentUserAvatar;
-let currentUserName;
-let currentUserBackground;
-let currentUserId;
+let loginStatus="";
+let currentUserAvatar="";
+let currentUserName="";
+let currentUserBackground="";
+let currentUserId="";
 
 class Profile{
 
@@ -24,7 +24,7 @@ class Profile{
     }
 
     async getProfile(username){
-        const profileApiUrl = `http://127.0.0.1:8000/api/user/profile/${username}`
+        const profileApiUrl = `http://127.0.0.1:8000/api/user/profile/${username}/`
         const response = await fetch(profileApiUrl, {
             method: 'GET',
             cache: 'no-cache' 
@@ -52,6 +52,8 @@ class Profile{
             })
             .then(response=>response.json())
             .then(response=>{
+
+                getCurrentUserProfileReady = true
                 
                 this.loginStatus = loginStatus = '您已登入'
                 this.currentUserId = currentUserId = response['user_id']
@@ -72,7 +74,10 @@ class Profile{
                 redirectWhileLoadingForbiddenPage(currentUserName)
 
                 // render page if user is on profile page
-                this.renderProfilePage()
+                if(currentPathnameSplitted[2] === 'profile'){
+                    this.renderProfilePage()
+
+                }
 
             })
             .catch(error=>{
@@ -85,284 +90,182 @@ class Profile{
             currentUserBackground = this.defaultUserBackground;
 
             // render page if user is on profile page
-            this.renderProfilePage()
+            if(currentPathnameSplitted[2] === 'profile'){
+                this.renderProfilePage()
+
+            }
         }
     }
 
     async renderProfilePage(){
 
-        // check if user is on profile page
-        if(currentPathnameSplitted.includes('profile')){
+        getProfileReady = false
+        
+        const personalInfoElement = document.querySelector('.personal-info') // inserted html element 
 
-            const personalInfoElement = document.querySelector('.personal-info') // inserted html element 
+        this.getProfile(usernameOfCurrentPathname)
+        .then(response=>{
+            getProfileReady = true
 
-            this.getProfile(usernameOfCurrentPathname)
-            .then(response=>{
+            const data = response
+            let background = data.background_image
+            let avatar = data.avatar
+            let username = data.username
+            let intro = data.intro
+            let bio = data.bio
 
-                const data = response
-                let background = data.background_image
-                let avatar = data.avatar
-                let username = data.username
-                let intro = data.intro
-                let bio = data.bio
+            // check if the username extracted from pathname exists //
 
-                // check if the username extracted from pathname exists //
+            // if not exist, render the error page
+            if(response.error){
 
-                // if not exist, render the error page
-                if(response.error){
-
-                    const personalStoriesBlocks = document.querySelector('.personal-stories-block')
-                    personalStoriesBlocks.style.display = 'none'
-
-                    const errorMessage = "該用戶不存在"
-                    const backToPreviousPage = "回上頁"
-                    const toStoryPage = "前往傾聽故事"
-                    const profileErrorHTML = `
-                                            <div class="profile-errorMessage">${errorMessage}</div>
-                                            <div class="profile-backToPreviousPage">${backToPreviousPage}</div>
-                                            <div class="profile-toStoryPage">${toStoryPage}</div>
-                                            `
-
-                    personalInfoElement.insertAdjacentHTML('afterbegin', profileErrorHTML)
-
-                // if exists render user's page
-                } else{
-
-                    // check if current user is on its own profile page
-                    if(usernameOfCurrentPathname === currentUserName){
-
-                        const profileInfoHTML = `
-                                            <div class="profile-top-username">${currentUserName}</div>
-                                            <img class="profile-background" src="${currentUserBackground}"></img>
-                                            <img class="profile-avatar" src="${currentUserAvatar}"></img>
-                                            <div class="profile-username">${currentUserName}</div>
-                                            <div class="profile-intro">${this.currentUserIntro}</div>
-                                            <div class="editprofile-logout-block">
-                                                <div class="edit-profile">編輯個人資料</div>
-                                                <div class="logout">登出</div>
-                                            </div>
-                                            <div class="profile-bio">${this.currentUserBio}</div>
-                                            `
-
-                        personalInfoElement.insertAdjacentHTML('afterbegin', profileInfoHTML)
-
-                        // // render stories of the profile
-                        // this.renderSingleProfileStories(data)
-
-                        // add listener for the logout btn
-                        user.logoutUser()
-
-                    } else{
-                        const profileInfoHTML = `
-                                                <img class="profile-background" src="${background}"></img>
-                                                <img class="profile-avatar" src="${avatar}"></img>
-                                                <div class="profile-username">${username}</div>
-                                                <div class="profile-intro">${intro}</div>
-                                                <div class="profile-bio">${bio}</div>
-                                                `
-                        personalInfoElement.insertAdjacentHTML('afterbegin', profileInfoHTML)
-
-                        // // render profile stories
-                        // this.renderSingleProfileStories(data)
-                    }
+                const storiesBlocks = document.querySelector('stories-block')
+                if(storiesBlocks){
+                    storiesBlocks.style.display = 'none'
                 }
-            })
-            .catch(error=>{
-                console.log(error)
-            })
 
-        }
+                const errorMessage = "該用戶不存在"
+                const backToPreviousPage = "回上頁"
+                const toStoryPage = "前往傾聽故事"
+                const profileErrorHTML = `
+                                        <div class="profile-errorMessage">${errorMessage}</div>
+                                        <div class="profile-backToPreviousPage">${backToPreviousPage}</div>
+                                        <div class="profile-toStoryPage">${toStoryPage}</div>
+                                        `
+
+                personalInfoElement.insertAdjacentHTML('afterbegin', profileErrorHTML)
+
+            // if exists render user's page
+            } else{
+
+                // check if current user is on its own profile page
+                if(usernameOfCurrentPathname === currentUserName){
+
+                    const profileInfoHTML = `
+                                        <img class="profile-background" src="${currentUserBackground}"></img>
+                                        <img class="profile-avatar" src="${currentUserAvatar}"></img>
+                                        <div class="profile-username">${currentUserName}</div>
+                                        <div class="follow-block">
+                                            <span class="following"></span>
+                                            <span class="followers"></span>
+                                        </div>
+                                        <div class="profile-intro">${this.currentUserIntro}</div>
+                                        <div class="editprofile-logout-block">
+                                            <div class="edit-profile">編輯個人資料</div>
+                                            <div class="logout">登出</div>
+                                        </div>
+                                        <div class="editblock">
+                                            <p class="editblock-title"><i class="fa-solid fa-user-pen"></i> 編輯個人資料</p>
+                                            <div class="editblock-close">X</div>
+                                            <label class="editblock-changeusername-label" for="editblock-changeusername-input">變更使用者名稱</label>
+                                            <input type="text" class="editblock-changeusername-input" id="editblock-changeusername-input" name="editblock-changeusername-input"/>
+                                            <label class="editblock-changebg-label" for="editblock-changebg-input">變更背景圖片</label>
+                                            <input type="file" accept="image/*" class="editblock-changebg-input" id="editblock-changebg-input" name="editblock-changebg-input"/>
+                                            <label class="editblock-changeavatar-label" for="editblock-changeavatar-input">變更大頭貼</label>
+                                            <input type="file" accept="image/*" class="editblock-changeavatar-input" id="editblock-changeavatar-input" name="editblock-changeavatar-input"/>
+                                            <textarea class="editblock-changeIntro-input" id="editblock-changeIntro-input" name="editblock-changeIntro-input" placeholder="編輯簡介"></textarea><br/>
+                                            <textarea class="editblock-changeBio-input" id="editblock-changeBio-input" name="editblock-changeBio-input" placeholder="編輯自我介紹"></textarea><br/>
+                                            <div class="editblock-button" type="submit">編輯完成</div>
+                                         </div>
+                                        <div class="profile-bio">${this.currentUserBio}</div>
+                                        `
+
+                    personalInfoElement.insertAdjacentHTML('afterbegin', profileInfoHTML)
+
+                    const profileLayout = document.querySelector('.profile-layout')
+                    const profileTopUsernameHTML = `<div class="profile-top-username">${currentUserName}</div>`
+                    profileLayout.insertAdjacentHTML('beforebegin', profileTopUsernameHTML)
+
+                    // change stories-block width 
+                    if(window.innerWidth > 1200 && usernameOfCurrentPathname === currentUserName){
+                        document.querySelector('.stories-block').style.width = '60%'
+                    }
+
+                    // add listener for the logout btn
+                    user.logoutUser()
+
+                    followUtils.displayFollowBlock()
+
+                } else{
+                    const profileInfoHTML = `
+                                            <img class="profile-background" src="${background}"></img>
+                                            <img class="profile-avatar" src="${avatar}"></img>
+                                            <div class="profile-username">${username}</div>
+                                            <div class="follow" data-username=${username}>+ 追蹤</div>
+                                            <div class="unfollow" data-username=${username}>取消追蹤</div>
+                                            <div class="follow-block">
+                                                <span class="following"></span>
+                                                <span class="followers"></span>
+                                            </div>
+                                            <div class="profile-intro">${intro}</div>
+                                            <div class="profile-bio">${bio}</div>
+                                            `
+                    personalInfoElement.insertAdjacentHTML('afterbegin', profileInfoHTML)
+
+                    // change stories-block width
+                    if(window.innerWidth > 1200 && usernameOfCurrentPathname === currentUserName){
+                        document.querySelector('.stories-block').style.width = '60%'
+                    }
+
+                    followUtils.displayFollowBlock()
+
+                }
+            }
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+        .then(()=>{
+
+            if(currentPathnameSplitted[3] === currentUserName){
+                profileUtils.editProfileBtnListener()
+
+            } else {
+                followUtils.addListenerOnFollowUnfollowBtn()
+
+            }
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+
     }
 
-    // async renderSingleProfileStories(profileData){
-        
-    //     const profileStoriesData = profileData.self_stories
-    //     const profileStories = profileStoriesData.map(story=>{
-            
-    //         let storyId = story.id;
-    //         let storyAuthorAvatar = story.user.avatar;
-    //         let username = story.user.username;
-    //         let createdTime = story.time;
-    //         let modified_time = story.modified_time;
-    //         let text = story.text;
-    //         let image = story.image;
-    //         let upvoteTotal = story.upvote_total;
-    //         let commentsNum = story.comments.length
-            
-    //         let commentIputPlaceholder;
+    async editProfile(username, bg, avatar, intro, bio, userId){
 
-    //         if(loginStatus === "您已登入"){
-    //             commentIputPlaceholder = '留言'
-    //         } else{
-    //             commentIputPlaceholder = loginStatus
-    //         }
-            
-    //         if(image){
-    //             return `<div class="render-stories-wrap">
-    //                         <a href="/user/profile/${username}"><img class="stories-avatar" src="${storyAuthorAvatar}"/></a>
-    //                         <a href="/user/profile/${username}"><div class="stories-username">${username}</div></a>
-    //                         <div class="stories-options">&ctdot;</div>
-    //                         <div class="stories-time">${createdTime}</div>
-    //                         <div class="stories-text">${text}</div>
-    //                         <img class="stories-image" src="${image}"/>
-    //                         <div class="stories-upvote" data-story="${storyId}">
-    //                             <img src="/static/images/story/comment-like.png"/>
-    //                             <p>${upvoteTotal} </p>
-    //                         </div>                                    
-    //                         <div data-story="${storyId}">${commentsNum} 則留言</div>
-    //                         <div class="stories-click-like-comment-wrapper">
-    //                             <div class="stories-click-like"><i class="fa-solid fa-heart"></i>&nbsp喜歡</div>
-    //                             <div class="stories-click-comment" data-story="${storyId}"><i class="fa-solid fa-comment"></i>&nbsp留言</div>
-    //                         </div>
-    //                         <div class="write-comment-wrapper">
-    //                             <a href="${currentUserName}"><img class="write-comment-avatar" src="${currentUserAvatar}"/></a>
-    //                             <textarea class="write-comment-input-element" placeholder="${commentIputPlaceholder}" oninput="autoResizeInputElement()"></textarea>
-    //                             <i class="fa-solid fa-image"></i>
-    //                             <button class="write-comment-btn-element">送出</button>
-    //                         </div>
-    //                     </div>`                        
-    //         } else{
-    //             return `<div class="render-stories-wrap">
-    //                         <a href="/user/profile/${username}"><img class="stories-avatar" src="${storyAuthorAvatar}"/></a>
-    //                         <a href="/user/profile/${username}"><div class="stories-username">${username}</div></a>
-    //                         <div class="stories-options">&ctdot;</div>
-    //                         <div class="stories-time">${createdTime}</div>
-    //                         <div class="stories-text">${text}</div>
-    //                         <div class="stories-upvote" data-story="${storyId}">
-    //                             <img src="/static/images/story/comment-like.png"/>
-    //                             <p>${upvoteTotal} </p>
-    //                         </div>
-    //                         <div data-story="${storyId}">${commentsNum} 則留言</div>
-    //                         <div class="stories-click-like-comment-wrapper">
-    //                             <div class="stories-click-like"><i class="fa-solid fa-heart"></i>&nbsp喜歡</div>
-    //                             <div class="stories-click-comment" data-story="${storyId}"><i class="fa-solid fa-comment"></i>&nbsp留言</div>
-    //                         </div>
-    //                         <div class="write-comment-wrapper">
-    //                             <a href="/user/profile/${currentUserName}"><img class="write-comment-avatar" src="${currentUserAvatar}"/></a>
-    //                             <textarea class="write-comment-input-element" placeholder="${commentIputPlaceholder}" oninput="autoResizeInputElement()"></textarea>
-    //                             <i class="fa-solid fa-image"></i>
-    //                             <button class="write-comment-btn-element">送出</button>
-    //                         </div>
-    //                     </div>`
-    //         }
-    //     }).join("");
+        const token = localStorage.getItem('token')
+        const data = new FormData()
 
-    //     const personalStoriesAddBlockBtn = document.querySelector('.stories-addblock-button') // inserted html element 
-    //     personalStoriesAddBlockBtn.insertAdjacentHTML('afterend', profileStories)  
-        
-    //     // add event listener to every "upvote button" element
-    //     // that has "storyId" class 
-    //         // document.querySelectorAll('.stories-upvote').forEach(ele=>{
-    //         //     ele.onclick = event =>{
-    //         //         this.storyId = event.target.dataset.story
-    //         //         this.username = usernameOfCurrentPathname
-    //         //         this.renderSingleProfileStoryComments()
-    //         //     }
-    //         // })
+        data.append('username', username)
+        data.append('bg', bg)
+        data.append('avatar', avatar)
+        data.append('intro', intro)
+        data.append('bio', bio)
+        data.append('userId', userId)
 
-    //     // add event listener to every comment button element
-    //      // that has "storyId" class 
-    //     document.querySelectorAll('.stories-upvote').forEach(ele=>{
-    //         let commentNums = ele.nextSibling.nextSibling
+        const headers = {
+            'Authorization': 'Bearer ' + token
+        }
 
-    //         commentNums.onclick = event =>{
+        fetch('http://127.0.0.1:8000/api/user/profiles/', {
+            method: 'PATCH',
+            headers: headers,
+            body: data,
+            cache: 'no-cache'
+        })
+        .then(response=>response.json())
+        .then(response=>{
 
-    //             const triggeredEvent = event.target
-    //             this.storyId = triggeredEvent.dataset.story
-    //             this.renderSingleProfileStoryComments(triggeredEvent)
-    //         }
-    //     })
+            const username = response.data.username;
+            window.location.replace(`/user/profile/${username}`);
 
-    //     document.querySelectorAll('.stories-click-comment').forEach(ele=>{
-    //         ele.onclick = event =>{
+        })
+        .catch(error=>{
+            console.log(error)
+        })
 
-    //             const triggeredEvent = event.target
-    //             this.storyId = triggeredEvent.dataset.story
-    //             this.renderSingleProfileStoryComments(triggeredEvent)
+    }
 
-    //         }
-    //     })
-    // }
-
-    // async renderSingleProfileStoryComments(triggeredEvent){
-
-    //     this.getProfile(usernameOfCurrentPathname)
-    //     .then(response=>{
-
-    //         const profileStoriesData = response.self_stories
-
-    //         // 點擊並展開留言內容後，讓特定storyId貼文的留言數量、留言按鈕listener失效
-    //         // 防止重複的留言內容被呼叫並渲染
-    //         if(!triggeredEvent.classList.contains("has-clicked")){
-                
-    //             document.querySelectorAll(`[data-story='${this.storyId}']`).forEach(element=>{
-    //                 element.classList.add('has-clicked')
-    //             })
-
-    //             let profileStoryComments;
-    //             profileStoriesData.forEach(data=>{
-    //                 if(data.id === this.storyId){
-    //                     profileStoryComments = data.comments
-    //                 }
-    //             })
-
-    //             const comments = profileStoryComments.map(comment=>{
-    //                 let avatar = comment.user.avatar;
-    //                 let username = comment.user.username;
-    //                 let createdTime = comment.time;
-    //                 let text = comment.text;
-    //                 let image = comment.image 
-                    
-    //                 if(image){
-    //                     return `<div class="comment-detail-wrapper">
-    //                                 <a href="/user/profile/${username}"><img class="comment-detail-avatar" src="${avatar}"/></a>
-    //                                 <a href="/user/profile/${username}"><div class="comment-detail-username">${username}</div></a>
-    //                                 <div class="comment-detail-created-time">${createdTime}</div>
-    //                                 <div class="comment-detail-text">${text}</div>
-    //                                 <img class="comment-detail-image" src="${image}"/>
-    //                             </div>`
-    //                 } else{
-    //                     return `<div class="comment-detail-wrapper">
-    //                                 <a href="/user/profile/${username}"><img class="comment-detail-avatar" src="${avatar}"/></a>
-    //                                 <a href="/user/profile/${username}"><div class="comment-detail-username">${username}</div></a>
-    //                                 <div class="comment-detail-created-time">${createdTime}</div>
-    //                                 <div class="comment-detail-text">${text}</div>
-    //                             </div>`   
-    //                 }
-    //             }).join("");
-    
-    //             // let selectedInsertElement = all commentnums element of both pc and mobile;
-    //             let selectedInsertElements = []
-                
-    //             Array.from(document.querySelectorAll(`[data-story='${this.storyId}']`)).forEach(element=>{
-    //                 if(element.classList.length <= 1){
-    //                     selectedInsertElements.push(element) 
-    //                 }
-    //             });
-
-    //             selectedInsertElements.forEach(element=>{
-    //                 element.insertAdjacentHTML('afterend', comments);
-    //             })
-
-    //             // add top border to divide the comments block and contents block
-    //             let nextElementSiblingOfCommentsnum = []
-    //             Array.from(document.querySelectorAll(`[data-story='${this.storyId}']`)).forEach(element=>{
-    //                 if(element.classList.length <= 1){
-    //                     nextElementSiblingOfCommentsnum.push(element.nextElementSibling) 
-    //                 }
-    //             });
-                
-    //             nextElementSiblingOfCommentsnum.forEach(element=>{
-    //                 if(element.className !== 'stories-click-like-comment-wrapper'){
-    //                     element.style = 'border-style:solid;border-width:1px 0 0 0;border-color:#e0e0e0'
-    //                 }
-    //             })
-    //         }
-
-    //     }).catch(error=>{
-    //         console.log(error)
-    //     })
-    // }
 }
 
 async function renderNavbarAvatar(avatarSRC){
@@ -374,3 +277,36 @@ async function renderNavbarAvatar(avatarSRC){
 
 const profile = new Profile()
 profile.getCurrentUserProfile()
+
+let getProfileReady = false
+let getCurrentUserProfileReady = false
+
+
+const profileUtils = {
+
+    editProfileBtnListener(){
+        const editProfileBtn = document.querySelector('.edit-profile')
+        editProfileBtn.addEventListener('click', ()=>{
+            document.querySelector('.editblock').classList.add('has-triggered')
+            document.querySelector('.overlay').classList.add('has-triggered')
+
+            document.querySelector('.editblock-close').onclick = ()=>{
+                document.querySelector('.editblock').classList.remove('has-triggered')
+                document.querySelector('.overlay').classList.remove('has-triggered')
+            }
+
+            document.querySelector('.editblock-button').onclick = () => {
+                const username = document.querySelector('.editblock-changeusername-input').value
+                const bg = document.querySelector('.editblock-changebg-input').files[0] || ""
+                const avatar = document.querySelector('.editblock-changeavatar-input').files[0] || ""
+                const intro = document.querySelector('.editblock-changeIntro-input'). value
+                const bio = document.querySelector('.editblock-changeBio-input'). value
+                const userId = currentUserId
+
+                profile.editProfile(username, bg, avatar, intro, bio, userId)
+            }
+        })
+    },
+
+    
+}

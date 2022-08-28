@@ -16,7 +16,7 @@ class Comment{
         const commentId = kwargs.commentId
         const page = kwargs.page
 
-        if(storyId){
+        if(storyId !== undefined){
 
             const response = await fetch(this.commentListApiUrl+ `?user=${currentUserId}&storyId=${storyId}&page=${page}`, {
                 method: 'GET',
@@ -25,7 +25,7 @@ class Comment{
 
             return await response.json();
 
-        } else {
+        } else if(commentId !== undefined) {
 
             const response = await fetch(this.commentListApiUrl+ `?user=${currentUserId}&commentId=${commentId}&page=${page}`, {
                 method: 'GET',
@@ -33,6 +33,26 @@ class Comment{
             })
 
             return await response.json();
+
+        } else {
+
+            const token = localStorage.getItem('token')
+
+            const headers = {
+                'Authorization': 'Bearer ' + token,
+                "Content-Type": "application/json",
+                "Accept": "application/json",   
+            }            
+            const followings = kwargs.followings
+            const body = {"followings": followings,}
+            const response = await fetch(this.commentListApiUrl, {
+                method: 'PATCH',
+                headers: headers,
+                body: JSON.stringify(body),
+                cache: 'no-cache',
+            })
+    
+            return await response.json();            
 
         }
     }

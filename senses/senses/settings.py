@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'story.apps.StoryConfig',
 
+    'django_celery_results',
+
 ]
 
 REST_FRAMEWORK = {
@@ -116,12 +118,22 @@ WSGI_APPLICATION = 'senses.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'senses_project',
+    #     'USER': os.environ.get('MYSQL_USERNAME'),
+    #     'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
+    #     'HOST': 'localhost',
+    #     'port': '3306',
+    # }
+
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'senses_project',
+        'NAME': 'senses',
         'USER': os.environ.get('MYSQL_USERNAME'),
         'PASSWORD': os.environ.get('MYSQL_PASSWORD'),
-        'HOST': 'localhost',
+        'HOST': 'senses.clmepehxmhif.us-east-1.rds.amazonaws.com',
+        'port': '3306',
     }
 }
 
@@ -186,3 +198,17 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media_uploaded')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user.User'
+
+# CELERY SETTING
+REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
+
+CELERY_BROKER_URL = f'redis://:{REDIS_PASSWORD}@127.0.0.1:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Taipei'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+# CELERY RESULTS SETTING
+CELERY_RESULT_BACKEND = 'django-db'

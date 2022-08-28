@@ -3,29 +3,63 @@
 {% load static %}
 
 {% block titleblock %}
-    <title>{{sitename}} | {{username}}</title>
+    <title>{{sitename}}</title>
 {% endblock %}
 {% block linkblock%}
     <link rel="stylesheet" type="text/css" href="{% static 'css/user/profile.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/story/story.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/story/comment.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/story/like.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/user/follow.css' %}">
+    <script src="https://kit.fontawesome.com/2b1fe198d1.js" crossorigin="anonymous"></script>
 {% endblock %}
 
 
 {% block mainblock %}
-    <div class="wrapper">
+
+    <div class="profile-layout">
         <div class="personal-info"></div>
-        <div class="personal-stories-block">
+        <div class="stories-block">
             <div class="stories-add-block">
-                <div class="stories-addblock-button">分享故事</div>
-                <div class="stories-addblock-fadein-content">
-                    <a href="/stories/add" class="stories-addblock-photo"><div><i class="fa-solid fa-image"></i></div></a>
+                <div class="stories-addblock-button"><i class='bx bx-book-add'></i>分享故事</div>
+                <div class="stories-addblock-fadein-block">
+                    <p class="fadein-block-title"><i class='bx bx-book-add'></i>分享故事</p>
+                    <p class="fadein-edit-title"><i class="fa-regular fa-pen-to-square"></i> 編輯故事</p>
+                    <div class="fadein-block-close">X</div>
+                    <div class="fadein-block-form">
+                        <textarea class="form-text-content-input" id="form-text-content-input" name="form-text-content-input" placeholder="嗨!分享些什麼吧~"></textarea><br/>
+                        <div class="image-preview-wrapper"></div>
+                        <label class="form-image-content-label" for="form-image-content-input"><i class="fa-solid fa-image addblock" style="font-size: 18px"></i><div class="form-image-content-label-text">上傳相片</div></label>
+                        <input type="file" accept="image/*" class="form-image-content-input" id="form-image-content-input" name="form-image-content-input" multiple/>
+                        <div class="addblock-submit-button" type="submit">分享</div>
+                        <div class="fadein-edit-button" type="submit">編輯完成</div>
+                    </div>
+                </div>
+            </div>
+            <div class="messageBlock-fadein-block">
+                <p class="fadein-block-title"><i class='bx bxs-eraser'></i>刪除故事</p>
+                <p class="message">確定要刪除嗎？刪除後就無法再回復囉！</p>
+                <div class="delete-btn-wrapper" type="submit">
+                    <p class="delete-cancel-btn">取消</p>
+                    <p class="delete-confirm-btn">確定</p>
                 </div>
             </div>
         </div>
+        <div class="profile-info-block"></div>
     </div>
+
+    <div style="height: 30px;"></div>
 
 {% endblock %}
 
 {% block jsblock %}
     <script src="{% static 'js/user/user.js' %}"></script>
-
+    <script src="{% static 'js/utils/loader.js' %}"></script>
+    <script src="{% static 'js/utils/imagePreview.js' %}"></script>
+    <script src="{% static 'js/utils/story_imagesSwiper.js' %}"></script>
+    <script src="{% static 'js/utils/story_scroll.js' %}"></script>
+    <script src="{% static 'js/story/comment.js' %}"></script>
+    <script src="{% static 'js/story/like.js' %}"></script>
+    <script src="{% static 'js/user/follow.js' %}"></script>
+    <script src="{% static 'js/story/story.js' %}"></script>
 {% endblock %}

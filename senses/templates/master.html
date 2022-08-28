@@ -27,25 +27,22 @@
     <div class="top-navbar">
         <!--Mobile-->
         <div class="top-navbar-mobile">
-            <a href="/"><img src="{% static 'images/logo/logo_1_black.png' %}"/></a>
+            <a href="{% url 'stories' %}"><img src="{% static 'images/logo/logo_1_black.png' %}"/></a>
             <div class="right-content-mobile">
                 <div class="status-off">
                     <a class="login-btn" href="{% url 'login' %}"><p class="login">登入</p></a>
                     <a class="register-btn" href="{% url 'register' %}"><p class="register">註冊</p></a>
                 </div>
                 <div class="status-on">
-                    <a class="navSearchBtn" href=""><img src="{% static 'images/icons/search.png' %}"/></a>
                     <a class="navStoryBtn" href="{% url 'stories' %}"><img src="{% static 'images/icons/stories_new.png' %}"/></a>                
-                    <a class="navMessageBtn" href=""><img src="{% static 'images/icons/message.png' %}"></a>
-                    <a class="navProfileBtn" href=""><img class="navProfile" src="{% static 'media_uploaded/images/profile/default.png' %}"/></a>
+                    <a class="navNotificationBtn"><img src="{% static 'images/icons/notification.png' %}"></a>
+                    <a class="navProfileBtn"><img class="navProfile" src="{% static 'media_uploaded/images/profile/default.png' %}"/></a>
                 </div>
             </div>
         </div>
         <!--PC-->
         <div class="top-navbar-pc">
-            <a href="/"><img src="{% static 'images/logo/logo_1_black.png' %}"/></a>
-            <img class="search-icon" src="{% static 'images/icons/search_before.png' %}"/>
-            <input class="search-bar" type="text" name="search" placeholder="搜尋更多善的時刻" />
+            <a href="{% url 'stories' %}"><img src="{% static 'images/logo/logo_1_black.png' %}"/></a>
             <div class="right-content-pc">
                 <div class="status-off">
                     <a class="login-btn" href="{% url 'login' %}"><p class="login">登入</p></a>
@@ -53,8 +50,7 @@
                 </div>
                 <div class="status-on">
                     <a class="navStoryBtn" href="{% url 'stories' %}"><img src="{% static 'images/icons/stories_new.png' %}"/></a>                
-                    <a class="navMessageBtn" href=""><img src="{% static 'images/icons/message.png' %}"></a>
-                    <a class="navProfileBtn" href=""><img class="navProfile" src="{% static 'media_uploaded/images/profile/default.png' %}"/></a>
+                    <a class="navProfileBtn"><img class="navProfile" src="{% static 'media_uploaded/images/profile/default.png' %}"/></a>
                 </div>
             </div>
         </div>        
@@ -67,11 +63,13 @@
     <script src="{% static 'js/utils/checkUserStatus.js' %}"></script>
     <script src="{% static 'js/utils/redirectLoggedinUserToPersonalPage.js' %}"></script>
     <script src="{% static 'js/user/profile.js' %}"></script>
-    <script src="{% static 'js/utils/search.js' %}"></script>
     <script src="{% static 'js/utils/fadein.js' %}"></script>
     <script src="{% static 'js/utils/close.js' %}"></script>
 
     {% block jsblock%}
     {% endblock%}
+
+    <script src="{% static 'js/exe.js' %}"></script>
+
 </body>
 </html>

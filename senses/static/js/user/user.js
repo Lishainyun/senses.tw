@@ -65,10 +65,8 @@ class User {
 
                 if(token){
 
-                    const username = this.email.split('@')[0];
-
                     localStorage.setItem('token', token)
-                    window.location.href = `http://127.0.0.1:8000/user/profile/${username}` 
+                    window.location.href = `http://127.0.0.1:8000/stories` 
 
                 } else{
                     if(loginPage === 'login'){
@@ -101,8 +99,8 @@ class User {
                         
         logoutBtn.forEach(ele=>{
             ele.addEventListener('click', ()=>{
-                localStorage.removeItem('token')
-                location.href = ""
+                localStorage.clear()
+                location.href = "/user/login"
             })
         })
 
