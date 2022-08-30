@@ -3,9 +3,9 @@
 class User {
 
     #password;
-    userListApiUrl = 'http://127.0.0.1:8000/api/users/';
-    userApiUrl = 'http://127.0.0.1:8000/api/user/';
-    userTokenApiUrl = 'http://127.0.0.1:8000/api/user/token'
+    userListApiUrl = 'http://44.199.90.64:8000/api/users/';
+    userApiUrl = 'http://44.199.90.64:8000/api/user/';
+    userTokenApiUrl = 'http://44.199.90.64:8000/api/user/token'
 
     constructor(email, password){
         this.email = email;

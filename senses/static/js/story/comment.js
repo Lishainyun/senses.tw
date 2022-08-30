@@ -2,9 +2,9 @@
 
 class Comment{
 
-    commentListApiUrl = 'http://127.0.0.1:8000/api/comments/'
-    commentApiUrl = 'http://127.0.0.1:8000/api/comment/'
-    commentAddApiUrl = 'http://127.0.0.1:8000/api/comments/add/'
+    commentListApiUrl = 'http://44.199.90.64:8000/api/comments/'
+    commentApiUrl = 'http://44.199.90.64:8000/api/comment/'
+    commentAddApiUrl = 'http://44.199.90.64:8000/api/comments/add/'
 
     constructor(){
 
