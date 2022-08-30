@@ -57,7 +57,7 @@ a:active {
 [For mobile]*/
 
 body{
-    background-image: url(/static/images/user/user_background_mobile.jpg);
+    /* background-image: url(https://d3knydgma6pz3s.cloudfront.net/static/images/user/user_background_mobile.jpg); */
     background-size: cover;
     background-repeat: no-repeat;
 }
@@ -101,7 +101,7 @@ body{
 @media screen and (min-width: 1201px){
 
     body{
-        background-image: url(/static/images/user/user_background_pc.jpg);
+        /* background-image: url(http://d3knydgma6pz3s.cloudfront.net/static/images/user/user_background_pc.jpg); */
         background-size: cover;
         background-repeat: no-repeat;
     }

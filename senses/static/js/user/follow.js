@@ -2,9 +2,9 @@
 
 class Follow{
 
-    followsListApiUrl = 'http://127.0.0.1:8000/api/follows/'
-    followApiUrl = 'http://127.0.0.1:8000/api/follow/'
-    followAddApiUrl = 'http://127.0.0.1:8000/api/follows/add/'
+    followsListApiUrl = 'http://44.199.90.64:8000/api/follows/'
+    followApiUrl = 'http://44.199.90.64:8000/api/follow/'
+    followAddApiUrl = 'http://44.199.90.64:8000/api/follows/add/'
 
     async getFollowList(username){
 
