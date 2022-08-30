@@ -1,0 +1,453 @@
+/*////////////////////////////////////
+[For global setting]*/
+a{
+    text-decoration: none;
+}
+
+a:link {
+    color: black;
+}
+  
+/* visited link */
+a:visited {
+    color: black;
+}
+  
+/* selected link */
+a:active {
+    color: black;
+}
+
+/*///////////*/
+/*/ Loaders /*/
+/*///////////*/
+
+.profile-bg.loader, .profile-avatar.loader, .profile-username.loader, .profile-intro.loader, .editprofile-logout-block.loader{
+    position:relative;
+    height: 6px;
+    animation-name: loader; 
+    animation-duration: 6s; 
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;   
+    background: -webkit-gradient(linear, left top, right top, color-stop(8%, #eeeeee), color-stop(18%, #dddddd), color-stop(33%, #eeeeee));
+    background: -webkit-linear-gradient(left, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+    background: linear-gradient(to right, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+    background-size: 1600px 104px;  
+    -webkit-background-size: 800px 104px;  
+}
+
+.profile.loader{
+    height: 400px;
+    position: relative;
+}
+
+@keyframes loader {
+    0% {
+    background-position: -468px 0
+  }
+  100% {
+    background-position: 468px 0
+  }
+
+}
+
+.profile-bg.loader{
+    width: 100%;
+    height: 200px;
+    margin: 20px auto;
+    border-radius: 20px 20px 0 0;
+}
+
+.profile-avatar.loader{
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    margin: -100px auto 10px auto;
+    border: 3px solid white;
+    z-index: 1;
+}
+
+.profile-username.loader{
+    height: 18px;
+    width: 30%;
+    margin: auto;
+}
+
+.profile-intro.loader{
+    height: 18px;
+    margin: 10px auto;
+    width: 50%;
+}
+
+.editprofile-logout-block.loader{
+    height: 35px;
+    width: 90%;
+    margin: 10px auto;
+}
+
+
+/*////////////////////////////////////
+[For mobile phones]*/
+
+.profile-layout{
+    width:95%;
+    margin:auto;
+    position: relative;
+}
+
+.profile-top-username{
+    padding: 10px;
+    text-align: center;
+    background-color: #fdb338;
+    color: white;
+    width: 100%;
+}
+
+.personal-info{
+    display: none;
+    justify-items: center;
+    position: relative;
+}
+
+.profile-background{
+    display: block;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    margin: 20px auto;
+    border-radius: 20px 20px 0 0;
+}
+
+.profile-avatar{
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: -100px auto 10px auto;
+    border: 3px solid white;
+    z-index: 1;
+}
+
+.profile-username{
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.profile-intro{
+    margin: 5px 0 10px 0;
+}
+
+.editprofile-logout-block{
+    display: grid;
+    grid-template-columns: 85% 15%;
+    grid-template-rows: 35px;
+    width: 100%;
+    justify-items: center;
+    color: gray;
+    margin: 0 0 10px 0;
+}
+
+.edit-profile{
+    padding: 7.5px 0 0 0;
+    cursor: pointer;
+    width: 95%;
+    height: 100%;
+    color: white;
+    background-color: #015096;
+    text-align: center;
+    margin-left: 10px;
+    border-radius: 10px;
+}
+
+.edit-profile:hover{
+    background-color: #015baa;
+}
+
+.editblock{
+    display: none;
+    position: fixed;
+    width: 95%;
+    left: 50%;
+    transform: translate(-50%, -40px);
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 20px #AAAAAA;
+}
+
+.editblock.has-triggered{
+    display: block;
+    z-index: 2001;
+    animation: fadeIn 0.2s;
+}
+
+.editblock-title{
+    background-color: #fdb338;
+    color:#FFFFFF;
+    text-align:center;
+    font-size: 18px;
+    font-weight: 400;
+    padding: 7px;
+    border-radius: 10px 10px 0 0;
+    margin: 0px;
+}
+
+.editblock-close{
+    cursor: pointer;
+    font-size: 22px;
+    position: fixed;
+    right: 12px;
+    top: 4px;
+    color: white;
+}
+
+.editblock-close:hover{
+    color:#636363;
+}
+
+.editblock-changeusername-label{
+    display: inline-block;
+    padding: 10px;
+}
+
+.editblock-changeusername-input{
+    width: 95%;
+    padding: 10px;
+    margin-left: 2.5%;
+}
+
+.editblock-changebg-label{
+    display: inline-block;
+    padding: 10px;
+
+}
+
+#editblock-changebg-input{
+    display: block;
+    width: 100%;
+    padding: 0 10px;
+}
+
+.editblock-changeavatar-label{
+    padding: 10px;
+    display: inline-block;
+}
+
+#editblock-changeavatar-input{
+    display: block;
+    padding: 0 10px 10px 10px;
+    width: 100%;
+}
+
+.editblock-changeIntro-input{
+    width: 100%;
+    height: 100px;
+    border-width: 1px 0;
+    border-color:#adacac;
+    padding: 10px;
+    resize: none;
+}
+
+.editblock-changeBio-input{
+    width: 100%;
+    height: 150px;
+    border-width: 0 0 1px 0;
+    border-color:#adacac;
+    padding: 10px;
+    resize: none;
+}
+
+.editblock-button{
+    cursor: pointer;
+    background-color: #015096;
+    width: 95%;
+    padding: 8px;
+    margin: 10px auto;
+    border:none;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+}
+
+.editblock-button:hover{
+    background-color: #015baa;
+}
+
+.logout{
+    padding: 7.5px 0 0 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.logout:hover{
+    text-decoration: underline;
+}
+
+.profile-bio{
+    width: 100%;
+    background-color: white;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+.profile-info-block{
+    display: none;
+}
+
+.profile-info-block.mobile{
+    display: block;
+    width: 95%;
+    background-color: white;
+    position: fixed;
+    max-height: 360px;
+    border-radius: 12px;
+    flex-direction: column;
+    border: 1px solid #adacac;
+    z-index: 3000;
+    top: 50px;
+}
+
+/*////////////////////////////////////
+[For tablet]*/
+@media screen and (min-width: 501px){
+
+    .profile-layout{
+        width:500px;
+        margin:auto;
+    }
+
+    .profile-background{
+        display: block;
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        margin: 20px auto;
+        border-radius: 20px 20px 0 0;
+    
+    }
+    
+    
+}
+
+
+/*////////////////////////////////////
+[For PC]*/
+@media screen and (min-width: 1201px){
+
+    .profile-layout{
+        width:800px;
+        margin:auto;
+    }
+
+    .profile-background{
+        display: block;
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        margin: 20px auto;
+        border-radius: 20px 20px 0 0;
+    
+    }
+
+    .profile-top-username{
+        display: none;
+    }
+
+    .editblock{
+        width: 600px;
+    }
+
+    .profile-info-block{
+        display: none;
+        width: 310px;
+        background-color: white;
+        position: absolute;
+        top: 410px;
+        max-height: 360px;
+        right: 0;
+        border-radius: 12px;
+        flex-direction: column;
+        border: 1px solid #adacac;
+    }
+
+    .profile-infoblock-loader-wrapper{
+        display: inline-flex;
+        width: 310px;
+        background-color: white;
+        min-height: 395px;
+        position: absolute;
+        top: 410px;
+        right: 0;
+        border-radius: 12px;
+        flex-direction: column;
+    }
+
+    .profile-infoblock.loader{
+        margin: 10px;
+        width: 100%;
+    }
+
+    .profile-infoblock-avatar.loader, .profile-infoblock-username.loader, .profile-infoblock-time.loader, .profile-infoblock-message.loader{
+        position:relative;
+        height: 6px;
+        animation-name: loader; 
+        animation-duration: 2s; 
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;   
+        background: -webkit-gradient(linear, left top, right top, color-stop(8%, #eeeeee), color-stop(18%, #dddddd), color-stop(33%, #eeeeee));
+        background: -webkit-linear-gradient(left, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+        background: linear-gradient(to right, #eeeeee 8%, #dddddd 18%, #eeeeee 33%);
+        background-size: 800px 104px;  
+        -webkit-background-size: 800px 104px;  
+    }
+
+    .profile-infoblock-avatar{
+        border-radius: 50%;
+        width: 50px;
+        object-fit: cover;
+    }
+    
+    .profile-infoblock-username{
+        display: inline-block;
+        padding: 10px 0 0  0;
+        transform: translate(5px, -30px);
+        cursor: pointer;    
+    }
+
+    .profile-infoblock-time{
+        display: inline-block;
+        transform: translate(0px, 35px);
+        font-size: 10px;
+        color: grey;
+        position: absolute;
+        left: 70px;
+    }
+
+    .profile-infoblock-message{
+        margin-left: 70px;
+        width: 250px;
+        transform: translate(0px, -10px);
+    }
+    
+    .profile-infoblock-avatar.loader{
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .profile-infoblock-username.loader{
+        transform: translate(70px, -45px);
+        width: 70px;    
+    }
+
+    .profile-infoblock-time.loader{
+        width: 150px;
+        transform: translate(-75px, -30px);
+    }
+
+    .profile-infoblock-message.loader{
+        width: 70%;
+        transform: translate(0px, -10px);
+    }
+}

@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    {% block titleblock %}
+    {% endblock %}
+	<meta name="day trip" content="taipei attractions recommendation">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/icons/favicon.io' %}">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+
+    {% block linkblock%}
+    {% endblock %}
+</head>
+<body>
+    <div class="background-pic">
+        <div class="wrapper">
+            <p class="title"> 善時 </p>
+            <p class="slogan">讓善的感受時時刻刻</p>
+            <div class="btn-wrapper">
+                <a href="user/login"><div>登入</div></a>
+                <a href="user/register"><div>註冊</div></a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/home.js' %}"></script>
+
+</body>
+</html>

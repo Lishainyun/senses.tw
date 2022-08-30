@@ -1,0 +1,92 @@
+.likeslist-wrapper{
+    position: fixed;
+    width: 95%;
+    left: 50%;
+    transform: translate(-50%, 0px);
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 20px #AAAAAA;
+    z-index: 2000;
+}
+
+.likeslist-wrapper.profile{
+
+    transform: translate(-50%, -400px);
+
+}
+
+.likeslist-title{
+    background-color: #fdb338;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+    padding: 7px;
+    border-radius: 10px 10px 0 0;
+    margin: 0px;
+}
+
+.likeslist-close{
+    cursor: pointer;
+    font-size: 22px;
+    position: fixed;
+    right: 12px;
+    top: 4px;
+    color: white;
+}
+
+.likeslist-close:hover{
+    color:#636363;
+}
+
+.likeslist-users{
+    display: flex;
+    padding: 8px;
+    position: relative;
+
+}
+
+.likeslist-users::after{
+    content: '';
+    position: absolute;
+    left: 2.5%;
+    top: 50px;
+    border-bottom: 1px solid #AAAAAA;
+    width: 95%;
+}
+
+.likeslist-avatar{
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.likeslist-username, .likeslist-displaymore{
+    cursor: pointer;
+    padding: 8px;
+    color: #515151;
+}
+
+.likeslist-username:hover, .likeslist-displaymore:hover{
+    text-decoration: underline;
+}
+
+/*////////////////////////////////////
+[For tablet]*/
+@media screen and (min-width: 501px){
+    .likeslist-wrapper.profile{
+
+        transform: translate(-50%, -600px);
+
+    }
+}
+/*////////////////////////////////////
+[For pc]*/
+@media screen and (min-width: 1201px){
+
+    .likeslist-wrapper{
+        width: 600px;
+    }
+}

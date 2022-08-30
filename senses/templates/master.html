@@ -1,0 +1,75 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    {% block titleblock %}
+    {% endblock %}
+	<meta name="day trip" content="taipei attractions recommendation">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/icons/favicon.io' %}">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+
+    {% block linkblock%}
+    {% endblock %}
+</head>
+<body>
+    <div class="overlay"></div>
+    <!--Blank padding-->
+    <div style="height:60px;"></div>
+
+    <!--Top-Nav-->
+    <div class="top-navbar">
+        <!--Mobile-->
+        <div class="top-navbar-mobile">
+            <a href="{% url 'stories' %}"><img src="{% static 'images/logo/logo_1_black.png' %}"/></a>
+            <div class="right-content-mobile">
+                <div class="status-off">
+                    <a class="login-btn" href="{% url 'login' %}"><p class="login">登入</p></a>
+                    <a class="register-btn" href="{% url 'register' %}"><p class="register">註冊</p></a>
+                </div>
+                <div class="status-on">
+                    <a class="navStoryBtn" href="{% url 'stories' %}"><img src="{% static 'images/icons/stories_new.png' %}"/></a>                
+                    <a class="navNotificationBtn"><img src="{% static 'images/icons/notification.png' %}"></a>
+                    <a class="navProfileBtn"><img class="navProfile" src="https://d3knydgma6pz3s.cloudfront.net/media/profile/default.png"/></a>
+                </div>
+            </div>
+        </div>
+        <!--PC-->
+        <div class="top-navbar-pc">
+            <a href="{% url 'stories' %}"><img src="{% static 'images/logo/logo_1_black.png' %}"/></a>
+            <div class="right-content-pc">
+                <div class="status-off">
+                    <a class="login-btn" href="{% url 'login' %}"><p class="login">登入</p></a>
+                    <a class="register-btn" href="{% url 'register' %}"><p class="register">註冊</p></a>
+                </div>
+                <div class="status-on">
+                    <a class="navStoryBtn" href="{% url 'stories' %}"><img src="{% static 'images/icons/stories_new.png' %}"/></a>                
+                    <a class="navProfileBtn"><img class="navProfile" src="https://d3knydgma6pz3s.cloudfront.net/media/profile/default.png"/></a>
+                </div>
+            </div>
+        </div>        
+    </div>
+
+    {% block mainblock %}
+    {% endblock %}
+
+    <script src="{% static 'js/utils/getCurrentUsernameFromURL.js' %}"></script>
+    <script src="{% static 'js/utils/checkUserStatus.js' %}"></script>
+    <script src="{% static 'js/utils/redirectLoggedinUserToPersonalPage.js' %}"></script>
+    <script src="{% static 'js/user/profile.js' %}"></script>
+    <script src="{% static 'js/utils/fadein.js' %}"></script>
+    <script src="{% static 'js/utils/close.js' %}"></script>
+
+    {% block jsblock%}
+    {% endblock%}
+
+    <script src="{% static 'js/exe.js' %}"></script>
+
+</body>
+</html>

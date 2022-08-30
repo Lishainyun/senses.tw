@@ -1,0 +1,151 @@
+.follow, .unfollow{
+    display: none;
+    cursor: pointer;
+    width: 70px;
+    height: 30px;
+    line-height: 30px;
+    color: white;
+    background-color: #015096;
+    text-align: center;
+    border-radius: 10px;
+    position: absolute;
+    transform: translate(70px, 305px);
+}
+
+.unfollow{
+    transform: translate(80px, 305px);
+    width: 90px;
+    background-color: #fdb338;
+}
+
+.follow:hover{
+    background-color: #015baa;
+}
+
+.unfollow:hover{
+    background-color: #f8c065;
+}
+
+.follow-block{
+    width: 100%;
+    margin: 5px 0 0 0;
+    display: flex;
+    color: grey;
+}
+
+.following{
+    width: 50%;
+    text-align: right;
+    padding-right: 2px;
+    cursor: pointer;
+}
+
+.followers{
+    width: 50%;
+    padding-left: 2px;
+    cursor: pointer;
+}
+
+.following:hover, .followers:hover{
+    text-decoration: underline;
+}
+
+.following-block, .followers-block{
+
+    position: fixed;
+    width: 95%;
+    left: 50%;
+    transform: translate(-50%, -375px);
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 20px #AAAAAA;
+    z-index: 2000;
+    max-height: 500px;
+
+}
+
+.following-block-close, .followers-block-close{
+    cursor: pointer;
+    font-size: 22px;
+    position: fixed;
+    right: 12px;
+    top: 4px;
+    color: white;
+}
+
+.following-block-close:hover, .followers-block-close:hover{
+    color:#636363;
+}
+
+.following-title, .followers-title{
+    background-color: #fdb338;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+    padding: 7px;
+    border-radius: 10px 10px 0 0;
+    margin: 0px;
+}
+
+.following-users, .followers-users{
+    display: flex;
+    padding: 8px;
+    position: relative;
+}
+
+.following-users::after, .followers-users::after{
+    content: '';
+    position: absolute;
+    left: 2.5%;
+    top: 50px;
+    border-bottom: 1px solid #AAAAAA;
+    width: 95%;
+}
+
+.following-avatar, .followers-avatar{
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.following-username, .followers-username, .follow-block-displaymore{
+    cursor: pointer;
+    padding: 8px;
+    color: #515151;
+}
+
+.following-username:hover, .followers-username:hover, .follow-block-displaymore:hover{
+    text-decoration: underline;
+}
+
+
+
+/*////////////////////////////////////
+[For tablet]*/
+@media screen and (min-width: 501px){
+
+    .follow{
+        transform: translate(70px, 505px);
+    }
+
+    .unfollow{
+        transform: translate(80px, 505px);
+    }
+
+    .following-block, .followers-block{
+
+        width: 500px;
+    }
+
+}
+
+
+/*////////////////////////////////////
+[For PC]*/
+@media screen and (min-width: 1201px){
+    
+
+}

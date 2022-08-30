@@ -1,0 +1,50 @@
+{% extends 'master.html' %}
+
+{% load static %}
+
+{% block titleblock %}
+<title>{{sitename}} | 註冊</title>
+{% endblock %}
+{% block linkblock %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/user/register.css' %}">
+{% endblock %}
+
+
+{% block mainblock %}
+    <div class="register-wrapper">
+        <p class="register-title">註冊</p>
+        <p class="register-welcometext">讓善的感受時時刻刻</p>
+        <form class="register-form" method="POST" novalidate>
+            {% csrf_token %}
+            <label class="email" for="email"><strong>電子信箱</strong></label><br/>
+            <input class="emailInput" type="email" id="email" name="email" placeholder="example@email.com" /><br/>
+            {% if form.email.errors %}
+                {{form.email.errors}}
+            {% endif %}
+            <label class="password1" for="password1"><strong>密碼</strong></label><br/>
+            <input class="passwordInput" type="password" id="password1" name="password1" placeholder="8位數以上英文數字組合" /><br/>
+            {% if form.password1.errors %}
+                {{form.password1.errors}}
+            {% endif %}            
+            <label class="password2" for="password2"><strong>確認密碼</strong></label><br/>
+            <input class="passwordInput" type="password" id="password2" name="password2"/><br/> 
+            {% if form.password2.errors %}
+                {{form.password2.errors}}
+            {% endif %}
+
+            <div class="alert alert-success">
+                <strong>{{success_registered_message}}</strong>
+            </div>
+            
+            <button class="submit-button" type="submit">註冊</button>
+
+            <a href="/user/login">已經有帳號？點我登入</a>
+        </form>
+    </div>
+    
+
+{% endblock  %}
+
+{% block jsblock %}
+    <script src="{% static 'js/user/user.js' %}"></script>
+{% endblock %}
