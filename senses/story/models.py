@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.db.models.signals import post_save
 from django.core.validators import FileExtensionValidator
+from django.core.files.storage import default_storage
 from django.utils import timezone
 from user.models import User, Profile
 import uuid
@@ -25,7 +26,7 @@ class Story(models.Model):
 
 
 def set_story_photo_upload_path(instance, filename):
-    return f'images/story/{instance.story}/{filename}'
+    return f'/story/{instance.story}/{filename}'
 
 class Story_Photo(models.Model):
 
@@ -33,8 +34,7 @@ class Story_Photo(models.Model):
                           primary_key=True, editable=False)
     time = models.DateTimeField()
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
-    url = models.ImageField(blank=True, null=True, upload_to=set_story_photo_upload_path, 
-                        validators=[FileExtensionValidator(
+    url = models.ImageField(blank=True, null=True, validators=[FileExtensionValidator(
                         allowed_extensions=['tiff', 'tif', 'bmp', 'jpg', 'jpeg', 'gif', 'png', 'eps'])])
     def __str__(self):
         return str(self.url).split('/')[-1]
@@ -61,7 +61,7 @@ class Comment(models.Model):
         db_table = 'comment'
 
 def set_comment_photo_upload_path(instance, filename):
-    return f'images/story/{instance.id}/{filename}'
+    return f'/comment/{instance.id}/{filename}'
 
 class Comment_Photo(models.Model):
 
@@ -69,8 +69,7 @@ class Comment_Photo(models.Model):
                           primary_key=True, editable=False)
     time = models.DateTimeField()
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-    url = models.ImageField(blank=True, null=True, upload_to=set_comment_photo_upload_path, 
-                        validators=[FileExtensionValidator(
+    url = models.ImageField(blank=True, null=True, validators=[FileExtensionValidator(
                         allowed_extensions=['tiff', 'tif', 'bmp', 'jpg', 'jpeg', 'gif', 'png', 'eps'])])
     
     def __str__(self):

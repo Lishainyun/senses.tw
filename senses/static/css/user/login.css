@@ -2,7 +2,7 @@
 [For mobile phones]*/
 
 body{
-    background-image: url(http://127.0.0.1:8000/static/images/user/user_background_mobile.jpg);
+    background-image: url('https://bonum-senses.s3.amazonaws.com/static/images/user/user_background_mobile.jpg');
     background-size: cover;
     background-repeat: no-repeat;
 }
@@ -140,7 +140,7 @@ body{
 @media screen and (min-width: 1201px){
 
     body{
-        background-image: url(http://127.0.0.1:8000/static/images/user/user_background_pc.jpg);
+        background-image: url('https://bonum-senses.s3.amazonaws.com/static/images/user/user_background_pc.jpg');
         background-size: cover;
         background-repeat: no-repeat;
     }

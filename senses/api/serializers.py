@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from user.models import User, Profile, Follow
-from story.models import Story, Story_Photo, Comment, Comment_Photo, Like, Saved_Story
+from story.models import Story, Story_Photo, Comment, Comment_Photo, Like
 from datetime import datetime
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):

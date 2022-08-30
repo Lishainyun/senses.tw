@@ -33,6 +33,7 @@ class Profile{
     }
 
     async getCurrentUserProfile(){
+        
         const data = await checkUserStatus()
         const userStatus = data.status
         const token = data.token
@@ -52,7 +53,7 @@ class Profile{
             })
             .then(response=>response.json())
             .then(response=>{
-
+                
                 getCurrentUserProfileReady = true
                 
                 this.loginStatus = loginStatus = '您已登入'

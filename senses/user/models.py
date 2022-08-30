@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from django.db import models
+from django.core.files.storage import default_storage
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.core.validators import FileExtensionValidator
 from django.utils.translation import gettext_lazy as _
@@ -63,10 +64,10 @@ class ProfileManager():
     pass
 
 def set_profile_avatar_upload_path(instance, filename):
-    return f'images/profile/avatar/{instance.user_id}/{filename}'
+    return f'profile/avatar/{instance.user_id}/{filename}'
 
 def set_profile_bg_upload_path(instance, filename):
-    return f'images/profile/background/{instance.user_id}/{filename}'
+    return f'profile/background/{instance.user_id}/{filename}'
 
 class Profile(models.Model):
 
@@ -74,12 +75,8 @@ class Profile(models.Model):
     username = models.CharField(max_length=100, default="使用者名稱", db_index=True,)
     intro = models.CharField(max_length=200, blank=True, null=True, default="尚未填寫簡介")
     bio = models.TextField(blank=True, null=True, default="尚未填寫自我介紹")
-    avatar = models.ImageField(null=True, blank=True, upload_to=set_profile_avatar_upload_path, 
-                            validators=[FileExtensionValidator(allowed_extensions=['tiff','tif','bmp','jpg','jpeg','gif','png','eps'])],
-                            default='images/profile/default.png')
-    background_image = models.ImageField(null=True, blank=True, upload_to=set_profile_bg_upload_path, 
-                            validators=[FileExtensionValidator(allowed_extensions=['tiff','tif','bmp','jpg','jpeg','gif','png','eps'])],
-                            default='images/profile/bg-default.png')
+    avatar = models.ImageField(default='profile/default.png', null=True, blank=True, validators=[FileExtensionValidator(allowed_extensions=['tiff','tif','bmp','jpg','jpeg','gif','png','eps'])])
+    background_image = models.ImageField(default='profile/bg-default.png', null=True, blank=True, validators=[FileExtensionValidator(allowed_extensions=['tiff','tif','bmp','jpg','jpeg','gif','png','eps'])])
     
     def __str__(self):
         return self.user_id.email

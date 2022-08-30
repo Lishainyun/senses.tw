@@ -15,10 +15,11 @@ load_dotenv('.env')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [ 'senses.tw', '44.199.90.64']
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # Application definition
 
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'story.apps.StoryConfig',
 
     'django_celery_results',
+    'storages'
 
 ]
 
@@ -178,20 +180,6 @@ USE_TZ = False
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.0/howto/static-files/
-
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-]
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/media_uploaded')
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -212,3 +200,31 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 
 # CELERY RESULTS SETTING
 CELERY_RESULT_BACKEND = 'django-db'
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.0/howto/static-files/
+
+# AWS S3 SETTING
+CLOUD_FRONT_DOMAIN = os.environ.get('CLOUD_FRONT_DOMAIN')
+
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID ')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_S3_CUSTOM_DOMAIN = CLOUD_FRONT_DOMAIN
+AWS_S3_FILE_OVERWRITE = False  #同名檔案是否要覆寫
+AWS_DEFAULT_ACL = None
+AWS_QUERYSTRING_AUTH = False
+
+
+# s3 static settings
+AWS_LOCATION = 'static'
+STATIC_URL = f'{AWS_S3_CUSTOM_DOMAIN}{AWS_LOCATION}/'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+
+# s3 public media settings
+MEDIA_LOCATION = 'media'
+MEDIA_URL = f'{AWS_S3_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/'
+DEFAULT_FILE_STORAGE = 'senses.custom_storage.MediaStorage' #上傳的媒體檔案

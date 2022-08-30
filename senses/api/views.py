@@ -93,10 +93,9 @@ def login_profile(request):
         data = request.data
         token = data['token']
         user_id = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])['user_id']
-
         profile = Profile.objects.get(user_id=user_id)
         serializer = ProfileSerializer(profile, many=False)
-
+        
         return Response(serializer.data, 200)
     except:
         error = {"error": True, 
@@ -171,6 +170,7 @@ def add_story(request):
 
         if len(images) != 0:
             for image in images:
+                print(image, story, time)
                 img = Story_Photo.objects.create(story=story, url=image, time=time)
                 
         success = {"success": True, "message": "Add story successfully."}

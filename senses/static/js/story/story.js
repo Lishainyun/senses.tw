@@ -281,6 +281,8 @@ class Story{
                         const displayCommentsDataUtils = storyId.concat('', '-displayComments')
                         const imageUploadDataUtils = storyId.concat('', '-imageupload')
                         const writecommentErrorUtils = storyId.concat('', '-writeerror')
+
+                        const cloudFront = 'http://d3knydgma6pz3s.cloudfront.net/'
                         
                         return `<div class="render-stories-wrap">
                                     <a href="/user/profile/${username}"><img class="stories-avatar" src="${storyAuthorAvatar}"/></a>
@@ -290,7 +292,7 @@ class Story{
                                     <div class="stories-text">${text}</div>
                                     <div class="stories-image-wrapper"></div>
                                     <div class="stories-likes" data-storyid="${storyId}">
-                                        <img src="/static/images/story/comment-like.png"/>
+                                        <img src="${cloudFront}static/images/story/comment-like.png"/>
                                         <p>${likesNum}</p>
                                     </div>                                    
                                     <div class="comment-nums" data-storyid="${storyId}" data-utils="${displayCommentsDataUtils}" data-commentsnum="${commentsNum}">${commentsNum} 則留言</div>
@@ -336,6 +338,9 @@ class Story{
                     const displayCommentsDataUtils = storyId.concat('', '-displayComments')
                     const imageUploadDataUtils = storyId.concat('', '-imageupload')
                     const writecommentErrorUtils = storyId.concat('', '-writeerror')
+
+                    const cloudFront = 'http://d3knydgma6pz3s.cloudfront.net/'
+
                     
                     stories = `<div class="render-stories-wrap">
                                     <a href="/user/profile/${username}"><img class="stories-avatar" src="${storyAuthorAvatar}"/></a>
@@ -345,7 +350,7 @@ class Story{
                                     <div class="stories-text">${text}</div>
                                     <div class="stories-image-wrapper"></div>
                                     <div class="stories-likes" data-storyid="${storyId}">
-                                        <img src="/static/images/story/comment-like.png"/>
+                                        <img src="${cloudFront}static/images/story/comment-like.png"/>
                                         <p>${likesNum}</p>
                                     </div>                                    
                                     <div class="comment-nums" data-storyid="${storyId}" data-utils="${displayCommentsDataUtils}" data-commentsnum="${commentsNum}">${commentsNum} 則留言</div>
@@ -494,7 +499,7 @@ class Story{
 
                 if(normalizedURLs[i] && normalizedURLs[i].length !== 0){
                     normalizedURLs[i].forEach(url=>{
-    
+
                         let html = `<img class="stories-image" src="${url}"/>`
                         allImageWrapper[i].insertAdjacentHTML('beforeend', html)
     
@@ -512,7 +517,7 @@ class Story{
 
                 if(normalizedURLs[i] && normalizedURLs[i].length !== 0){
                     normalizedURLs[i].forEach(url=>{
-    
+
                         let html = `<img class="stories-image" src="${url}"/>`
                         allImageWrapper[i].insertAdjacentHTML('beforeend', html)
     
@@ -816,7 +821,7 @@ const storyUtils = {
                     const username = data.user.username
                     const time = data.time
                     const text = data.text
-    
+                    
                     const HTML = `
                                 <div class="info-block-wrapper" data-id="${id}">
                                     <img class="infoblock-avatar" src="${avatar}"/>
