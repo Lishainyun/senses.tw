@@ -71,7 +71,7 @@ class Follow{
             .then(response=>{
 
                 if(response.code === 'token_not_valid'){
-                    window.location.href = `http://127.0.0.1:8000/user/login/`
+                    window.location.href = "/user/login/"
                 } else {
                     document.querySelector('.follow').style.display = 'none'
                     document.querySelector('.unfollow').style.display = 'block'
@@ -208,7 +208,7 @@ const followUtils = {
     },
 
     displayFollowing(followingEle, followingNum){
-        followingEle.innerHTML = `${followingNum} 追蹤中`
+        followingEle.innerHTML = `${followingNum} 追蹤`
 
             followingEle.onclick = ()=>{
 
@@ -226,7 +226,7 @@ const followUtils = {
 
                                 const followingBlockHTML = `<div class="following-block">
                                                                 <div class="following-block-close">X</div>
-                                                                <p class="following-title">追蹤中</p>
+                                                                <p class="following-title">追蹤</p>
                                                             </div>`
                                 
                                 document.querySelector('.follow-block').insertAdjacentHTML('afterbegin', followingBlockHTML)

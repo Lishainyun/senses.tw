@@ -8,7 +8,7 @@ let currentUserId="";
 
 class Profile{
 
-    defaultUserAvatar = 'http://127.0.0.1:8000/static/media_uploaded/images/profile/default.png';
+    defaultUserAvatar = 'https://d3knydgma6pz3s.cloudfront.net/media/user_upload/profile/default.png';
     defaultUserBackground = '';
     loginStatus = '您尚未登入';
 

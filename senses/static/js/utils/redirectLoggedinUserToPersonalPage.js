@@ -13,8 +13,8 @@ async function redirectNavProfileBtnHrefToPersonal(currentUserName){
 async function redirectWhileLoadingForbiddenPage(currentUserName){
 
     const currentPage = window.location.href
-    const profileEntryPage = 'http://127.0.0.1:8000/user/profile/'
-    const loginPage = 'http://127.0.0.1:8000/user/login/'
+    const profileEntryPage = '/user/profile/'
+    const loginPage = '/user/login/'
 
     if(currentPage === profileEntryPage || currentPage === loginPage){
         window.location.replace(`/user/profile/${currentUserName}`);
