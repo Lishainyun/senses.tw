@@ -2,9 +2,9 @@
 
 class Story{
 
-    storyListApiUrl = 'http://44.199.90.64:8000/api/stories/'
-    storyApiUrl = 'http://44.199.90.64:8000/api/story/'
-    storyAddApiUrl = 'http://44.199.90.64:8000/api/stories/add/'
+    storyListApiUrl = 'http://www.senses.tw/api/stories/'
+    storyApiUrl = 'http://www.senses.tw/api/story/'
+    storyAddApiUrl = 'http://www.senses.tw/api/stories/add/'
     storyPhotos
 
     constructor(){

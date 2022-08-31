@@ -24,7 +24,7 @@ class Profile{
     }
 
     async getProfile(username){
-        const profileApiUrl = `http://44.199.90.64:8000/api/user/profile/${username}/`
+        const profileApiUrl = `http://www.senses.tw/api/user/profile/${username}/`
         const response = await fetch(profileApiUrl, {
             method: 'GET',
             cache: 'no-cache' 
@@ -38,7 +38,7 @@ class Profile{
         const userStatus = data.status
         const token = data.token
 
-        const CurrentUserProfileApiUrl = 'http://44.199.90.64:8000/api/user/profile/';
+        const CurrentUserProfileApiUrl = 'http://www.senses.tw/api/user/profile/';
         const headers = {'Content-Type': 'application/json'}
         const body = {'token': token} 
 
@@ -248,7 +248,7 @@ class Profile{
             'Authorization': 'Bearer ' + token
         }
 
-        fetch('http://44.199.90.64:8000/api/user/profiles/', {
+        fetch('http://www.senses.tw/api/user/profiles/', {
             method: 'PATCH',
             headers: headers,
             body: data,
