@@ -2,9 +2,9 @@
 
 class Like{
 
-    likeListApiUrl = 'http://44.199.90.64:8000/api/likes/'
-    likeApiUrl = 'http://44.199.90.64:8000/api/like/'
-    likeAddApiUrl = 'http://44.199.90.64:8000/api/likes/add/'
+    likeListApiUrl = 'http://www.senses.tw/api/likes/'
+    likeApiUrl = 'http://www.senses.tw/api/like/'
+    likeAddApiUrl = 'http://www.senses.tw/api/likes/add/'
 
     async getSingleLike(kwargs){
 
