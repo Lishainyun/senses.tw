@@ -14,90 +14,73 @@ redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0, password=REDIS_PAS
 
 def get_follows_list(self, username):
 
-    try: 
-        lookup = (Q(follower__username=username) | Q(following__username=username))
-        follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
+    lookup = (Q(follower__username=username) | Q(following__username=username))
+    follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
 
-        serializer = FollowSerializer(follow, many=True)
-        all_data = serializer.data
+    serializer = FollowSerializer(follow, many=True)
+    all_data = serializer.data
 
-        follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == username]
-        following_list = [dict(dict(data)['following']) for data in all_data if dict(dict(data)['follower'])['username'] == username]
+    follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == username]
+    following_list = [dict(dict(data)['following']) for data in all_data if dict(dict(data)['follower'])['username'] == username]
 
-        follower_list_length = len(follower_list)
-        following_list_length = len(following_list)
-        
-        data = {
-            "followerData": {
-                "followerList": follower_list,
-                "length": follower_list_length, 
-            },
-            "followingData": {
-                "followingList": following_list,
-                "length": following_list_length,
-            },
-        }
-        
-        # cache
-        follows_key = f'{username}_follows'
-        redis_client.set(follows_key, json.dumps(data))
-        redis_client.expire(follows_key, datetime.timedelta(days=1))
-        
-        logging.basicConfig(filename='log/info.log', level=logging.INFO)
-        logging.info('Set new get_follows_list cached after unfollow.')
+    follower_list_length = len(follower_list)
+    following_list_length = len(following_list)
+    
+    data = {
+        "followerData": {
+            "followerList": follower_list,
+            "length": follower_list_length, 
+        },
+        "followingData": {
+            "followingList": following_list,
+            "length": following_list_length,
+        },
+    }
+    
+    # cache
+    follows_key = f'{username}_follows'
+    redis_client.set(follows_key, json.dumps(data))
+    redis_client.expire(follows_key, datetime.timedelta(days=1))
 
-    except:
-
-        logging.basicConfig(filename='log/debug.log', level=logging.DEBUG)
-        logging.debug('Failed setting new get_follows_list cached after unfollow.')
 
 def unfollow(self, follower, following, username):
 
-    try: 
+    follow = Follow.objects.select_related('follower').filter(
+        follower__username=follower
+        ).select_related('following').get(
+            following__username=following
+            )
+            
+    follow.delete()
 
-        follow = Follow.objects.select_related('follower').filter(
-            follower__username=follower
-            ).select_related('following').get(
-                following__username=following
-                )
-                
-        follow.delete()
+    lookup = (Q(follower__username=username) | Q(following__username=username))
+    follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
 
-        lookup = (Q(follower__username=username) | Q(following__username=username))
-        follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
+    serializer = FollowSerializer(follow, many=True)
+    all_data = serializer.data
 
-        serializer = FollowSerializer(follow, many=True)
-        all_data = serializer.data
+    follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == username]
+    following_list = [dict(dict(data)['following']) for data in all_data if dict(dict(data)['follower'])['username'] == username]
 
-        follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == username]
-        following_list = [dict(dict(data)['following']) for data in all_data if dict(dict(data)['follower'])['username'] == username]
+    follower_list_length = len(follower_list)
+    following_list_length = len(following_list)
+    
+    data = {
+        "followerData": {
+            "followerList": follower_list,
+            "length": follower_list_length, 
+        },
+        "followingData": {
+            "followingList": following_list,
+            "length": following_list_length,
+        },
+    }
+    
+    # cache
+    follows_key = f'{username}_follows'
+    redis_client.set(follows_key, json.dumps(data))
+    redis_client.expire(follows_key, datetime.timedelta(days=1))
 
-        follower_list_length = len(follower_list)
-        following_list_length = len(following_list)
-        
-        data = {
-            "followerData": {
-                "followerList": follower_list,
-                "length": follower_list_length, 
-            },
-            "followingData": {
-                "followingList": following_list,
-                "length": following_list_length,
-            },
-        }
-        
-        # cache
-        follows_key = f'{username}_follows'
-        redis_client.set(follows_key, json.dumps(data))
-        redis_client.expire(follows_key, datetime.timedelta(days=1))
-        
-        logging.basicConfig(filename='log/info.log', level=logging.INFO)
-        logging.info('Successfully Unfollow and set new get_follows_list cached after unfollow.')
-
-    except:
-
-        logging.basicConfig(filename='log/debug.log', level=logging.DEBUG)
-        logging.debug('Failed unfollowing and setting new get_follows_list cached after unfollow.')
 
 def get_user_likeslist(self, user_id):
     
