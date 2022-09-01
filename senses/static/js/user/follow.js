@@ -118,7 +118,8 @@ class Follow{
                 followersNum -= 1
                 document.querySelector('.followers').innerHTML = `${followersNum} 粉絲`
 
-                localStorage.removeItem(currentUserName)
+                localStorage.removeItem(follower)
+                localStorage.removeItem(following)
 
             })
             .catch(error=>{
