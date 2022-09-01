@@ -838,6 +838,8 @@ def add_follow(request):
 
     try:
 
+        print('add_follow: ', follower, following)
+
         follow = Follow.objects.create(
             time=time,
         )

@@ -14,6 +14,7 @@ redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0, password=REDIS_PAS
 
 def follows_list(follower, following):
 
+    print('follows_list: ', follower, following)
     # follower's
     lookup = (Q(follower__username=follower) | Q(following__username=follower))
     follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
@@ -55,6 +56,7 @@ def follows_list(follower, following):
     follows_key = f'{follower}_follows'
     redis_client.set(follows_key, json.dumps(follower_data))
     redis_client.expire(follows_key, datetime.timedelta(days=1))
+    print('follows_key: ', follows_key)
 
     # following's
 
@@ -98,6 +100,9 @@ def follows_list(follower, following):
     follows_key = f'{following}_follows'
     redis_client.set(follows_key, json.dumps(following_data))
     redis_client.expire(follows_key, datetime.timedelta(days=1))
+
+    print('follows_key: ', follows_key)
+
 
 def unfollow(follower, following, username):
 
