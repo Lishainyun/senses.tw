@@ -2,9 +2,9 @@
 
 class Follow{
 
-    followsListApiUrl = 'http://127.0.0.1:8000/api/follows/'
-    followApiUrl = 'http://127.0.0.1:8000/api/follow/'
-    followAddApiUrl = 'http://127.0.0.1:8000/api/follows/add/'
+    followsListApiUrl = 'https://www.senses.tw/api/follows/'
+    followApiUrl = 'https://www.senses.tw/api/follow/'
+    followAddApiUrl = 'https://www.senses.tw/api/follows/add/'
 
     async getFollowList(username){
 
@@ -22,14 +22,14 @@ class Follow{
 
     }
 
-    async saveFollowList(username){
+    async saveFollowList(){
 
-        const currentUserFollowData = localStorage.getItem(username)
+        const currentUserFollowData = localStorage.getItem(currentUserName)
         if(currentPathnameSplitted[1] === 'stories' && !currentUserFollowData){
-            this.getFollowList(username)
+            this.getFollowList(currentUserName)
             .then(response=>{
                 saveFollowListFinished = true
-                if(username !== undefined){
+                if(currentUserName !== undefined){
                     localStorage.setItem(username, JSON.stringify(response.data))
 
                 }
@@ -71,7 +71,7 @@ class Follow{
             .then(response=>{
 
                 if(response.code === 'token_not_valid'){
-                    window.location.href = `http://127.0.0.1:8000/user/login/`
+                    window.location.href = `/user/login/`
                 } else {
                     document.querySelector('.follow').style.display = 'none'
                     document.querySelector('.unfollow').style.display = 'block'
