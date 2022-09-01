@@ -1,4 +1,3 @@
-from celery import shared_task
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 from user.models import Follow
@@ -13,7 +12,6 @@ import redis, os, logging, json, datetime
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
 redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0, password=REDIS_PASSWORD)
 
-@shared_task(bind=True)
 def get_follows_list(self, username):
 
     try: 
@@ -53,7 +51,6 @@ def get_follows_list(self, username):
         logging.basicConfig(filename='log/debug.log', level=logging.DEBUG)
         logging.debug('Failed setting new get_follows_list cached after unfollow.')
 
-@shared_task(bind=True)
 def unfollow(self, follower, following, username):
 
     try: 
@@ -102,7 +99,6 @@ def unfollow(self, follower, following, username):
         logging.basicConfig(filename='log/debug.log', level=logging.DEBUG)
         logging.debug('Failed unfollowing and setting new get_follows_list cached after unfollow.')
 
-@shared_task(bind=True)
 def get_user_likeslist(self, user_id):
     
     try:
@@ -124,7 +120,6 @@ def get_user_likeslist(self, user_id):
         logging.basicConfig(filename='log/debug.log', level=logging.DEBUG)
         logging.debug('Failed setting new get_user_likeslist cached after withdrawing like.')
 
-@shared_task(bind=True)
 def delete_like(self, object_id, user_id):
     
     try:

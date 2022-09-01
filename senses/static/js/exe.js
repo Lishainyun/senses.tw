@@ -12,7 +12,6 @@ function renderWholePage(page, keyword){
             clearInterval(renderStories)
 
             story.renderStories(page, keyword)
-            follow.saveFollowList(currentUserName)
         
         } 
 
@@ -20,7 +19,7 @@ function renderWholePage(page, keyword){
 
     const addOtherUtils = window.setInterval(()=>{
 
-        if(renderStoreisFinished && saveFollowListFinished){
+        if(renderStoreisFinished){
 
             clearInterval(addOtherUtils)
 

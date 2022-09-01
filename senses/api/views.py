@@ -22,7 +22,7 @@ from .serializers import (
 )
 
 from senses.settings import SECRET_KEY
-from . import tasks
+from . import utils
 import logging, jwt, datetime, json, redis, os
 
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
@@ -701,7 +701,7 @@ def add_like(request):
         data = serializer.data
 
         # renew cache
-        tasks.get_user_likeslist.delay(user_id)  
+        utils.get_user_likeslist(user_id)  
 
         success = {"success": True, "message": "Add like successfully.", "data": data}
         return Response(success, 200)
@@ -733,13 +733,13 @@ def handle_single_like(request):
         try:
             if story_id != "null":
 
-                tasks.delete_like.delay(story_id, user_id)
+                utils.delete_like(story_id, user_id)
 
                 return Response({"success": True, "message": "Delete like successfully."}, 200)
 
             else:
 
-                tasks.delete_like.delay(comment_id, user_id)
+                utils.delete_like(comment_id, user_id)
                 
                 return Response({"success": True, "message": "Delete like successfully."}, 200)
 
@@ -829,7 +829,7 @@ def add_follow(request):
         data = serializer.data
 
         # cache
-        tasks.get_follows_list.delay(username)      
+        utils.get_follows_list(username)      
 
         success = {"success": True, "message": "Follow successfully.", "data": data}
         return Response(success, 200)
@@ -866,7 +866,7 @@ def handle_single_follow(request):
     else:
         try:
 
-            tasks.unfollow.delay(follower, following, username)
+            utils.unfollow(follower, following, username)
 
             return Response({"success": True, "message": "Unfollow successfully."}, 200)
 
