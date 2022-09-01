@@ -701,7 +701,13 @@ def add_like(request):
         data = serializer.data
 
         # renew cache
-        utils.get_user_likeslist(user_id)  
+        likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
+        likes_serializer = LikeSerializer(likes, many=True)
+        likes_data = likes_serializer.data
+
+        user_likeslist_key = f'{user_id}_likeslist'
+        redis_client.set(user_likeslist_key, json.dumps(likes_data))
+        redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
         success = {"success": True, "message": "Add like successfully.", "data": data}
         return Response(success, 200)
@@ -733,14 +739,34 @@ def handle_single_like(request):
         try:
             if story_id != "null":
 
-                utils.delete_like(story_id, user_id)
+                like = Like.objects.select_related('story').filter(story__id=story_id).select_related('user').get(user__user_id=user_id)
+                
+                like.delete()        
+
+                likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
+                serializer = LikeSerializer(likes, many=True)
+                data = serializer.data
+
+                user_likeslist_key = f'{user_id}_likeslist'
+                redis_client.set(user_likeslist_key, json.dumps(data))
+                redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
                 return Response({"success": True, "message": "Delete like successfully."}, 200)
 
             else:
-
-                utils.delete_like(comment_id, user_id)
                 
+                like = Like.objects.select_related('comment').filter(comment__id=object_id).select_related('user').get(user__user_id=user_id)
+                
+                like.delete()        
+
+                likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
+                serializer = LikeSerializer(likes, many=True)
+                data = serializer.data
+
+                user_likeslist_key = f'{user_id}_likeslist'
+                redis_client.set(user_likeslist_key, json.dumps(data))
+                redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))  
+
                 return Response({"success": True, "message": "Delete like successfully."}, 200)
 
         except:
