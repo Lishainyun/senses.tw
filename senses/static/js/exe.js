@@ -12,7 +12,7 @@ function renderWholePage(page, keyword){
             clearInterval(renderStories)
 
             story.renderStories(page, keyword)
-            follow.saveFollowList(currentUserName)
+            follow.saveFollowList()
         
         } 
 
