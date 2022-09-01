@@ -2,18 +2,41 @@
 
 class Follow{
 
-    followsListApiUrl = 'http://www.senses.tw/api/follows/'
-    followApiUrl = 'http://www.senses.tw/api/follow/'
-    followAddApiUrl = 'http://www.senses.tw/api/follows/add/'
+    followsListApiUrl = 'http://127.0.0.1:8000/api/follows/'
+    followApiUrl = 'http://127.0.0.1:8000/api/follow/'
+    followAddApiUrl = 'http://127.0.0.1:8000/api/follows/add/'
 
     async getFollowList(username){
 
-        const response = await fetch(this.followsListApiUrl+`?user=${username}`, {
-            method: 'GET',
-            cache: 'no-cache',
-        })
+        const localStorageFollowData = localStorage.getItem(username)
 
-        return await response.json()
+        if(!localStorageFollowData){
+            const response = await fetch(this.followsListApiUrl+`?user=${username}`, {
+                method: 'GET',
+                cache: 'no-cache',
+            })
+
+            return await response.json()
+
+        } 
+
+    }
+
+    async saveFollowList(username){
+
+        const currentUserFollowData = localStorage.getItem(username)
+        if(currentPathnameSplitted[1] === 'stories' && !currentUserFollowData){
+            this.getFollowList(username)
+            .then(response=>{
+                saveFollowListFinished = true
+                if(username !== undefined){
+                    localStorage.setItem(username, JSON.stringify(response.data))
+
+                }
+            })
+        } 
+        
+        saveFollowListFinished = true
 
     }
 
@@ -48,10 +71,12 @@ class Follow{
             .then(response=>{
 
                 if(response.code === 'token_not_valid'){
-                    window.location.href = "/user/login/"
+                    window.location.href = `http://127.0.0.1:8000/user/login/`
                 } else {
                     document.querySelector('.follow').style.display = 'none'
                     document.querySelector('.unfollow').style.display = 'block'
+
+                    localStorage.removeItem(currentUserName)
     
                     let followersNum = parseInt(document.querySelector('.followers').innerHTML.split(" ")[0])
                     followersNum += 1
@@ -93,6 +118,8 @@ class Follow{
                 followersNum -= 1
                 document.querySelector('.followers').innerHTML = `${followersNum} 粉絲`
 
+                localStorage.removeItem(currentUserName)
+
             })
             .catch(error=>{
                 console.log(error)
@@ -128,6 +155,9 @@ const followUtils = {
     displayFollowBlock(){
 
         const username = usernameOfCurrentPathname
+        if(localStorage.getItem(username)){
+            localStorage.removeItem(username)
+        }
 
         let data;
         let followers;
@@ -141,6 +171,8 @@ const followUtils = {
             displayFollowBlockFinished = true
 
             data = response.data
+
+            localStorage.setItem(username, JSON.stringify(data))
 
             followers = data.followerData.followerList
             followersNum = data.followerData.length
@@ -176,15 +208,16 @@ const followUtils = {
     },
 
     displayFollowing(followingEle, followingNum){
-        followingEle.innerHTML = `${followingNum} 追蹤`
+        followingEle.innerHTML = `${followingNum} 追蹤中`
 
             followingEle.onclick = ()=>{
 
                 const username = usernameOfCurrentPathname
 
                 follow.getFollowList(username)
-                        .then((response)=>{
-                            const data = response.data
+                        .then(()=>{
+                            const localStorageFollowData = localStorage.getItem(username)
+                            const data = JSON.parse(localStorageFollowData)
                             const following = data.followingData.followingList
                             const followingNum = data.followingData.length
 
@@ -193,7 +226,7 @@ const followUtils = {
 
                                 const followingBlockHTML = `<div class="following-block">
                                                                 <div class="following-block-close">X</div>
-                                                                <p class="following-title">追蹤</p>
+                                                                <p class="following-title">追蹤中</p>
                                                             </div>`
                                 
                                 document.querySelector('.follow-block').insertAdjacentHTML('afterbegin', followingBlockHTML)
@@ -236,9 +269,10 @@ const followUtils = {
             const username = usernameOfCurrentPathname
 
             follow.getFollowList(username)
-                    .then((response)=>{
+                    .then(()=>{
 
-                        const data = response.data
+                        const localStorageFollowData = localStorage.getItem(username)
+                        const data = JSON.parse(localStorageFollowData)
                         const followers = data.followerData.followerList
                         const followersNum = data.followerData.length
 
