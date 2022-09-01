@@ -47,7 +47,7 @@ class User {
 
         const response = await fetch(this.userTokenApiUrl, {
 
-            method: 'PATCH',
+            method: 'POST',
             headers: headers,
             body: JSON.stringify(body),
             
@@ -66,7 +66,7 @@ class User {
                 if(token){
 
                     localStorage.setItem('token', token)
-                    window.location.href = `http://127.0.0.1:8000/stories` 
+                    window.location.href = "/stories" 
 
                 } else{
                     if(loginPage === 'login'){
