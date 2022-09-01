@@ -754,7 +754,7 @@ def handle_single_like(request):
                 return Response({"success": True, "message": "Delete like successfully."}, 200)
 
             else:
-                
+
                 like = Like.objects.select_related('comment').filter(comment__id=object_id).select_related('user').get(user__user_id=user_id)
                 
                 like.delete()        
@@ -854,7 +854,7 @@ def add_follow(request):
         data = serializer.data
 
         # cache
-        utils.get_follows_list(follower, following)      
+        utils.follows_list(follower, following)      
 
         success = {"success": True, "message": "Follow successfully.", "data": data}
         return Response(success, 200)

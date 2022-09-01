@@ -12,31 +12,44 @@ import redis, os, logging, json, datetime
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
 redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0, password=REDIS_PASSWORD)
 
-def get_follows_list(follower, following):
+def follows_list(follower, following):
 
     # follower's
     lookup = (Q(follower__username=follower) | Q(following__username=follower))
     follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
-
-    serializer = FollowSerializer(follow, many=True)
-    all_data = serializer.data
-
-    follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == follower]
-    following_list = [dict(dict(data)['following']) for data in all_data if dict(dict(data)['follower'])['username'] == follower]
-
-    follower_list_length = len(follower_list)
-    following_list_length = len(following_list)
     
     follower_data = {
         "followerData": {
-            "followerList": follower_list,
-            "length": follower_list_length, 
+            "followerList": [],
+            "length": 0, 
         },
         "followingData": {
-            "followingList": following_list,
-            "length": following_list_length,
+            "followingList": [],
+            "length": 0,
         },
-    }
+    }    
+
+    if follow.exists():
+
+        serializer = FollowSerializer(follow, many=True)
+        all_data = serializer.data
+
+        follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == follower]
+        following_list = [dict(dict(data)['following']) for data in all_data if dict(dict(data)['follower'])['username'] == follower]
+
+        follower_list_length = len(follower_list)
+        following_list_length = len(following_list)
+        
+        follower_data = {
+            "followerData": {
+                "followerList": follower_list,
+                "length": follower_list_length, 
+            },
+            "followingData": {
+                "followingList": following_list,
+                "length": following_list_length,
+            },
+        }
     
     # cache
     follows_key = f'{follower}_follows'
@@ -44,28 +57,42 @@ def get_follows_list(follower, following):
     redis_client.expire(follows_key, datetime.timedelta(days=1))
 
     # following's
+
+    following_data = {
+        "followerData": {
+            "followerList": [],
+            "length": 0, 
+        },
+        "followingData": {
+            "followingList": [],
+            "length": 0,
+        },
+    }    
+
     lookup = (Q(follower__username=following) | Q(following__username=following))
     follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
 
-    serializer = FollowSerializer(follow, many=True)
-    all_data = serializer.data
+    if follow.exists():
 
-    follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == following]
-    following_list = [dict(dict(data)['following']) for data in all_data if dict(dict(data)['follower'])['username'] == following]
+        serializer = FollowSerializer(follow, many=True)
+        all_data = serializer.data
 
-    follower_list_length = len(follower_list)
-    following_list_length = len(following_list)
-    
-    following_data = {
-        "followerData": {
-            "followerList": follower_list,
-            "length": follower_list_length, 
-        },
-        "followingData": {
-            "followingList": following_list,
-            "length": following_list_length,
-        },
-    }
+        follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == following]
+        following_list = [dict(dict(data)['following']) for data in all_data if dict(dict(data)['follower'])['username'] == following]
+
+        follower_list_length = len(follower_list)
+        following_list_length = len(following_list)
+        
+        following_data = {
+            "followerData": {
+                "followerList": follower_list,
+                "length": follower_list_length, 
+            },
+            "followingData": {
+                "followingList": following_list,
+                "length": following_list_length,
+            },
+        }
     
     # cache
     follows_key = f'{following}_follows'
@@ -81,62 +108,65 @@ def unfollow(follower, following, username):
             )
             
     follow.delete()
+    follows_list(follower, following)
 
-    # return follower's
-    lookup = (Q(follower__username=follower) | Q(following__username=follower))
-    follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
+    # # return follower's
+    # lookup = (Q(follower__username=follower) | Q(following__username=follower))
+    # follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
 
-    serializer = FollowSerializer(follow, many=True)
-    all_data = serializer.data
+    # if follow.exists():
 
-    follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == follower]
-    following_list = [dict(dict(data)['following']) for data in all_data if dict(dict(data)['follower'])['username'] == follower]
+    #     serializer = FollowSerializer(follow, many=True)
+    #     all_data = serializer.data
 
-    follower_list_length = len(follower_list)
-    following_list_length = len(following_list)
+    #     follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == follower]
+    #     following_list = [dict(dict(data)['following']) for data in all_data if dict(dict(data)['follower'])['username'] == follower]
+
+    #     follower_list_length = len(follower_list)
+    #     following_list_length = len(following_list)
+        
+    #     follower_data = {
+    #         "followerData": {
+    #             "followerList": follower_list,
+    #             "length": follower_list_length, 
+    #         },
+    #         "followingData": {
+    #             "followingList": following_list,
+    #             "length": following_list_length,
+    #         },
+    #     }
+
+    # #return following's
+    # lookup = (Q(follower__username=following) | Q(following__username=following))
+    # follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
+
+    # serializer = FollowSerializer(follow, many=True)
+    # all_data = serializer.data
+
+    # follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == following]
+    # following_list = [dict(dict(data)['following']) for data in all_data if dict(dict(data)['follower'])['username'] == following]
+
+    # follower_list_length = len(follower_list)
+    # following_list_length = len(following_list)
     
-    follower_data = {
-        "followerData": {
-            "followerList": follower_list,
-            "length": follower_list_length, 
-        },
-        "followingData": {
-            "followingList": following_list,
-            "length": following_list_length,
-        },
-    }
-
-    #return following's
-    lookup = (Q(follower__username=following) | Q(following__username=following))
-    follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
-
-    serializer = FollowSerializer(follow, many=True)
-    all_data = serializer.data
-
-    follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == following]
-    following_list = [dict(dict(data)['following']) for data in all_data if dict(dict(data)['follower'])['username'] == following]
-
-    follower_list_length = len(follower_list)
-    following_list_length = len(following_list)
-    
-    following_data = {
-        "followerData": {
-            "followerList": follower_list,
-            "length": follower_list_length, 
-        },
-        "followingData": {
-            "followingList": following_list,
-            "length": following_list_length,
-        },
-    }
+    # following_data = {
+    #     "followerData": {
+    #         "followerList": follower_list,
+    #         "length": follower_list_length, 
+    #     },
+    #     "followingData": {
+    #         "followingList": following_list,
+    #         "length": following_list_length,
+    #     },
+    # }
     
     # cache
-    follower_key = f'{follower}_follows'
-    following_key = f'{following}_follows'
-    redis_client.set(follower_key, json.dumps(follower_data))
-    redis_client.set(following_key, json.dumps(following_data))
-    redis_client.expire(follows_key, datetime.timedelta(days=1))
-    redis_client.expire(following_key, datetime.timedelta(days=1))
+    # follower_key = f'{follower}_follows'
+    # following_key = f'{following}_follows'
+    # redis_client.set(follower_key, json.dumps(follower_data))
+    # redis_client.set(following_key, json.dumps(following_data))
+    # redis_client.expire(follows_key, datetime.timedelta(days=1))
+    # redis_client.expire(following_key, datetime.timedelta(days=1))
 
 # def get_user_likeslist(user_id):
     
