@@ -759,13 +759,12 @@ def get_follows_list(request):
 
         data = json.loads(redis_cached_data)
 
-        print('Successfully get get_follows_list from redis')
         return Response({"success": True, "data": data}, 200)
 
     else:
 
         try: 
-            print('get follows list ', username)
+            
             lookup = (Q(follower__username=username) | Q(following__username=username))
             follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
 
@@ -829,7 +828,7 @@ def add_follow(request):
         data = serializer.data
 
         # cache
-        utils.get_follows_list(username)      
+        utils.get_follows_list(follower, following)      
 
         success = {"success": True, "message": "Follow successfully.", "data": data}
         return Response(success, 200)
