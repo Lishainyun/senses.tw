@@ -12,7 +12,7 @@ import redis, os, logging, json, datetime
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
 redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0, password=REDIS_PASSWORD)
 
-def get_follows_list(self, username):
+def get_follows_list(username):
 
     lookup = (Q(follower__username=username) | Q(following__username=username))
     follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
@@ -43,7 +43,7 @@ def get_follows_list(self, username):
     redis_client.expire(follows_key, datetime.timedelta(days=1))
 
 
-def unfollow(self, follower, following, username):
+def unfollow(follower, following, username):
 
     follow = Follow.objects.select_related('follower').filter(
         follower__username=follower
@@ -54,9 +54,9 @@ def unfollow(self, follower, following, username):
     follow.delete()
 
     lookup = (Q(follower__username=username) | Q(following__username=username))
-    follows = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
+    follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
 
-    serializer = FollowSerializer(follows, many=True)
+    serializer = FollowSerializer(follow, many=True)
     all_data = serializer.data
 
     follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == username]
@@ -82,7 +82,7 @@ def unfollow(self, follower, following, username):
     redis_client.expire(follows_key, datetime.timedelta(days=1))
 
 
-def get_user_likeslist(self, user_id):
+def get_user_likeslist(user_id):
     
     try:
 
@@ -103,7 +103,7 @@ def get_user_likeslist(self, user_id):
         logging.basicConfig(filename='log/debug.log', level=logging.DEBUG)
         logging.debug('Failed setting new get_user_likeslist cached after withdrawing like.')
 
-def delete_like(self, object_id, user_id):
+def delete_like(object_id, user_id):
     
     try:
 
