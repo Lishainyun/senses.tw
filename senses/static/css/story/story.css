@@ -696,17 +696,19 @@ input[type="file"]{
     display: inline-block;
     padding: 10px 0 0  0;
     transform: translate(5px, -25px);
-    cursor: pointer;    
+    cursor: pointer;
     font-size: 14px;
+    width: 120px;
+    overflow-x: hidden;
 }
 
 .infoblock-time{
     display: inline-block;
-    transform: translate(35px, 4px);
     font-size: 10px;
     color: grey;
-    position: absolute;
-    left: 70px;
+    position: relative;
+    left: 35px;
+    top: -25px;
 }
 
 .infoblock-message{
@@ -893,12 +895,9 @@ input[type="file"]{
     }
 
     .infoblock-time{
-        display: inline-block;
-        transform: translate(35px, 4px);
-        font-size: 10px;
-        color: grey;
-        position: absolute;
-        left: 70px;
+
+        left: 25px;
+
     }
 
     .infoblock-message{

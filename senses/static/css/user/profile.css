@@ -148,7 +148,6 @@ a:active {
 }
 
 .edit-profile{
-    padding: 7.5px 0 0 0;
     cursor: pointer;
     width: 95%;
     height: 100%;
@@ -157,6 +156,7 @@ a:active {
     text-align: center;
     margin-left: 10px;
     border-radius: 10px;
+    line-height: 35px;
 }
 
 .edit-profile:hover{
