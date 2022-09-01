@@ -54,9 +54,9 @@ def unfollow(self, follower, following, username):
     follow.delete()
 
     lookup = (Q(follower__username=username) | Q(following__username=username))
-    follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
+    follows = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
 
-    serializer = FollowSerializer(follow, many=True)
+    serializer = FollowSerializer(follows, many=True)
     all_data = serializer.data
 
     follower_list = [dict(dict(data)['follower']) for data in all_data if dict(dict(data)['following'])['username'] == username]

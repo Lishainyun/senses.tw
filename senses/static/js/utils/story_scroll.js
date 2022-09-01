@@ -39,7 +39,7 @@ class Scroll{
         
         if(this.page !== null){
             renderWholeStoryPage(this.page, this.keyword) // function from story.js
-        } else if (currentPathnameSplitted[1] === 'stories' && !currentPathnameSplitted[2]) {
+        } else if (currentPathnameSplitted[1] === 'stories' && !currentPathnameSplitted[2] || currentPathnameSplitted[2] === 'profile') {
             this.renderMessage()
         }
 
