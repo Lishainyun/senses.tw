@@ -138,51 +138,51 @@ def unfollow(follower, following, username):
     redis_client.expire(follows_key, datetime.timedelta(days=1))
     redis_client.expire(following_key, datetime.timedelta(days=1))
 
-def get_user_likeslist(user_id):
+# def get_user_likeslist(user_id):
     
-    try:
+#     try:
 
-        likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
-        serializer = LikeSerializer(likes, many=True)
-        data = serializer.data
+#         likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
+#         serializer = LikeSerializer(likes, many=True)
+#         data = serializer.data
 
-        user_likeslist_key = f'{user_id}_likeslist'
-        redis_client.set(user_likeslist_key, json.dumps(data))
-        redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
+#         user_likeslist_key = f'{user_id}_likeslist'
+#         redis_client.set(user_likeslist_key, json.dumps(data))
+#         redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
-        logging.basicConfig(filename='log/info.log', level=logging.INFO)
-        logging.info('Set new get_user_likeslist cached after withdrawing like.')
+#         logging.basicConfig(filename='log/info.log', level=logging.INFO)
+#         logging.info('Set new get_user_likeslist cached after withdrawing like.')
 
     
-    except ObjectDoesNotExist:
+#     except ObjectDoesNotExist:
 
-        logging.basicConfig(filename='log/debug.log', level=logging.DEBUG)
-        logging.debug('Failed setting new get_user_likeslist cached after withdrawing like.')
+#         logging.basicConfig(filename='log/debug.log', level=logging.DEBUG)
+#         logging.debug('Failed setting new get_user_likeslist cached after withdrawing like.')
 
-def delete_like(object_id, user_id):
+# def delete_like(object_id, user_id):
     
-    try:
+#     try:
 
-        like = Like.objects.select_related('story').filter(story__id=object_id).select_related('user').get(user__user_id=user_id)
+#         like = Like.objects.select_related('story').filter(story__id=object_id).select_related('user').get(user__user_id=user_id)
         
-        if like is None:
-            like = Like.objects.select_related('comment').filter(comment__id=object_id).select_related('user').get(user__user_id=user_id)
+#         if like is None:
+#             like = Like.objects.select_related('comment').filter(comment__id=object_id).select_related('user').get(user__user_id=user_id)
         
-        like.delete()        
+#         like.delete()        
 
-        likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
-        serializer = LikeSerializer(likes, many=True)
-        data = serializer.data
+#         likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
+#         serializer = LikeSerializer(likes, many=True)
+#         data = serializer.data
 
-        user_likeslist_key = f'{user_id}_likeslist'
-        redis_client.set(user_likeslist_key, json.dumps(data))
-        redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
+#         user_likeslist_key = f'{user_id}_likeslist'
+#         redis_client.set(user_likeslist_key, json.dumps(data))
+#         redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
-        logging.basicConfig(filename='log/info.log', level=logging.INFO)
-        logging.info('Successfully delete like and set new get_user_likeslist cached after withdrawing like.')
+#         logging.basicConfig(filename='log/info.log', level=logging.INFO)
+#         logging.info('Successfully delete like and set new get_user_likeslist cached after withdrawing like.')
 
     
-    except ObjectDoesNotExist:
+#     except ObjectDoesNotExist:
 
-        logging.basicConfig(filename='log/debug.log', level=logging.DEBUG)
-        logging.debug('Failed deleting like and setting new get_user_likeslist cached after withdrawing like.')
+#         logging.basicConfig(filename='log/debug.log', level=logging.DEBUG)
+#         logging.debug('Failed deleting like and setting new get_user_likeslist cached after withdrawing like.')
