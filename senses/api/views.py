@@ -828,7 +828,7 @@ def add_follow(request):
         data = serializer.data
 
         # cache
-        utils.get_follows_list(username)      
+        utils.get_follows_list(follower, following)      
 
         success = {"success": True, "message": "Follow successfully.", "data": data}
         return Response(success, 200)

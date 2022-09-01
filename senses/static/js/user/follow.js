@@ -30,7 +30,7 @@ class Follow{
             .then(response=>{
                 saveFollowListFinished = true
                 if(currentUserName !== undefined){
-                    localStorage.setItem(username, JSON.stringify(response.data))
+                    localStorage.setItem(currentUserName, JSON.stringify(response.data))
 
                 }
             })
