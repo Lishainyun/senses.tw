@@ -10,7 +10,9 @@ urlpatterns = [
     re_path(r'', include('main.urls')),
     re_path(r'^user/', include('user.urls')),
     re_path(r'^stories/', include('story.urls')),
-    re_path(r'^api/', include('api.urls'))
+    re_path(r'^api/', include('api.urls')),
+
+    re_path(r'^loaderio-fbf55221798b20797aceaff05aa6f185/', include('load_testing.urls')),
 
 ]
 

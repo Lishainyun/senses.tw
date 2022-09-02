@@ -695,7 +695,7 @@ input[type="file"]{
 .infoblock-username{
     display: inline-block;
     padding: 10px 0 0  0;
-    transform: translate(5px, -25px);
+    transform: translate(5px, -20px);
     cursor: pointer;
     font-size: 14px;
     width: 120px;
@@ -885,14 +885,6 @@ input[type="file"]{
         height: 40px;
         object-fit: cover;
     }
-    
-    .infoblock-username{
-        display: inline-block;
-        padding: 10px 0 0  0;
-        transform: translate(5px, -25px);
-        cursor: pointer;    
-        font-size: 14px;
-    }
 
     .infoblock-time{
 
@@ -923,7 +915,6 @@ input[type="file"]{
 
     .infoblock-time.loader{
         width: 150px;
-        transform: translate(-75px, -30px);
     }
 
     .infoblock-message.loader{
