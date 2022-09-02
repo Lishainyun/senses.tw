@@ -844,11 +844,11 @@ def add_follow(request):
             time=time,
         )
 
-        follower = Profile.objects.get(username=follower)
-        follow.follower = follower
+        follower_profile = Profile.objects.get(username=follower)
+        follow.follower = follower_profile
 
-        following = Profile.objects.get(username=following)
-        follow.following = following
+        following_profile = Profile.objects.get(username=following)
+        follow.following = following_profile
 
         follow.save()
 

@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'story.apps.StoryConfig',
 
     'django_celery_results',
-    'storages'
+    'storages',
+    'load_testing',
 
 ]
 
