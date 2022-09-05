@@ -62,10 +62,10 @@ def get_profile(request, username):
 
     if redis_cached_data is not None:
 
-        data = json.loads(redis_cached_data)
+        # data = json.loads(redis_cached_data)
 
         print('Successfully get data from redis')
-        return Response(data, 200)
+        return Response(redis_cached_data, 200)
     
     else:
 
@@ -647,10 +647,10 @@ def get_likes_list(request):
 
         if redis_cached_data is not None:
 
-            data = json.loads(redis_cached_data)
+            # data = json.loads(redis_cached_data)
 
             print('get user_likeslist from redis')
-            return Response({"success": True, "data": data}, 200)
+            return Response({"success": True, "data": redis_cached_data}, 200)
 
         else:
 
@@ -783,9 +783,9 @@ def get_follows_list(request):
 
     if redis_cached_data is not None:
 
-        data = json.loads(redis_cached_data)
+        # data = json.loads(redis_cached_data)
 
-        return Response({"success": True, "data": data}, 200)
+        return Response({"success": True, "data": redis_cached_data}, 200)
 
     else:
 
