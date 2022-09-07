@@ -1,3 +1,8 @@
+import jwt
+import datetime 
+import json
+import redis
+import os
 from django.http import HttpResponse, QueryDict
 from django.db.models import Prefetch, Count, Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -23,7 +28,6 @@ from .serializers import (
 
 from senses.settings import SECRET_KEY
 from . import utils
-import logging, jwt, datetime, json, redis, os
 
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
 redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0, password=REDIS_PASSWORD)
@@ -34,11 +38,12 @@ def get_users_list(request):
     try:  
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
-
         return Response(serializer.data, 200)
     except:
-        error = {"error": True, 
-                "message": "Request failed."}
+        error = {
+            "error": True, 
+            "message": "Request failed."
+        }
         return Response(error, 400)
 
 @api_view(['GET'])
@@ -47,11 +52,12 @@ def get_user(request, pk):
     try:
         user = User.objects.get(id=pk)
         serializer = UserSerializer(user, many=False)
-
         return Response(serializer.data, 200)
     except:
-        error = {"error": True, 
-                "message": "Request failed."}
+        error = {
+            "error": True, 
+            "message": "Request failed."
+        }
         return Response(error, 400)
 
 @api_view(['GET'])
@@ -61,14 +67,18 @@ def get_profile(request, username):
     redis_cached_data = redis_client.get(profile_key)
 
     if redis_cached_data is not None:
+        try:
+            data = json.loads(redis_cached_data)
+            print('Successfully get data from redis')
+            return Response(data, 200)
+        except valueError as err:
+            raise 
+                return Response({
+                    "error": True, 
+                    "message": "Cached data is not JSON object."
+                }, 400)
 
-        # data = json.loads(redis_cached_data)
-
-        print('Successfully get data from redis')
-        return Response(redis_cached_data, 200)
-    
     else:
-
         try:
             profile = Profile.objects.get(username=username)
             serializer = ProfileSerializer(profile, many=False)
@@ -82,7 +92,10 @@ def get_profile(request, username):
             return Response(data, 200)
 
         except:
-            error = {"error": True, "message": "Request failed."}
+            error = {
+                "error": True, 
+                "message": "Request failed."
+            }
             return Response(error, 400)
 
 
@@ -98,8 +111,10 @@ def login_profile(request):
         
         return Response(serializer.data, 200)
     except:
-        error = {"error": True, 
-                "message": "Request failed."}
+        error = {
+            "error": True, 
+            "message": "Request failed."
+        }
         return Response(error, 400)
 
 
@@ -147,8 +162,10 @@ def edit_profile(request):
 
         return Response({'success': True, 'data': data}, 200)
     except:
-        error = {"error": True, 
-                "message": "Request failed."}
+        error = {
+            "error": True, 
+            "message": "Request failed."
+        }
         return Response(error, 400)
 
 
@@ -173,11 +190,17 @@ def add_story(request):
                 print(image, story, time)
                 img = Story_Photo.objects.create(story=story, url=image, time=time)
                 
-        success = {"success": True, "message": "Add story successfully."}
+        success = {
+            "success": True, 
+            "message": "Add story successfully."
+        }
         return Response(success, 200)
 
     except:
-        error = {"error": True, "message": "Request failed."}
+        error = {
+            "error": True, 
+            "message": "Request failed."
+        }
         return Response(error, 400)
 
 @api_view(['GET', 'PATCH'])
@@ -200,7 +223,9 @@ def get_stories_list(request):
                 if current_location == 'story':
                     stories = Story.objects.all().order_by('-time')[offset:offset+13]
                 else:
-                    stories = Story.objects.select_related('user').filter(user__username=current_location_username).all().order_by('-time')[offset:offset+13]
+                    stories = Story.objects.select_related('user').filter(
+                        user__username=current_location_username
+                    ).all().order_by('-time')[offset:offset+13]
 
                 result_length = len(stories)
                 serializer = StorySerializer(stories[0:12], many=True)
@@ -208,28 +233,35 @@ def get_stories_list(request):
                 if user_id != 'undefined':
                     all_selected_stories_id_set = set([story['id'] for story in serializer.data])
                     all_currentuser_likes_story_id_set = set([str(story) for story in list(
-                                                    Like.objects.select_related('story')
-                                                    .select_related('user__user_id')
-                                                    .filter(user__user_id__id=user_id)
-                                                    .values_list('story', flat=True)
-                                                    )])
+                                                            Like.objects.select_related('story')
+                                                            .select_related('user__user_id')
+                                                            .filter(user__user_id__id=user_id)
+                                                            .values_list('story', flat=True)
+                                                            )])
 
-                    selectedStoriesIdListOfcurrentUserLikes = list(all_currentuser_likes_story_id_set.intersection(
-                                                                        all_selected_stories_id_set
-                                                                    ))                                
+                    selectedStoriesIdListOfcurrentUserLikes = list(
+                        all_currentuser_likes_story_id_set.intersection(
+                            all_selected_stories_id_set
+                        )
+                    )                                
                 else:
                     selectedStoriesIdListOfcurrentUserLikes = ""
 
-
                 if result_length >= 13:
 
-                    return Response({'nextPage': next_page, 'data':serializer.data, 
-                                    'selectedStoriesIdListOfcurrentUserLikes': selectedStoriesIdListOfcurrentUserLikes}, 200)
+                    return Response({
+                        'nextPage': next_page, 
+                        'data':serializer.data, 
+                        'selectedStoriesIdListOfcurrentUserLikes': selectedStoriesIdListOfcurrentUserLikes
+                    }, 200)
                     
                 elif result_length < 13:
 
-                    return Response({'nextPage': None, 'data':serializer.data,
-                                    'selectedStoriesIdListOfcurrentUserLikes': selectedStoriesIdListOfcurrentUserLikes}, 200)
+                    return Response({
+                        'nextPage': None, 
+                        'data':serializer.data,
+                        'selectedStoriesIdListOfcurrentUserLikes': selectedStoriesIdListOfcurrentUserLikes
+                    }, 200)
 
                 else:
 
@@ -257,21 +289,26 @@ def get_stories_list(request):
                 if user_id != 'undefined':
                     selected_story_id = set([keyword])
                     all_currentuser_likes_story_id_set = set([str(story) for story in list(
-                                                    Like.objects.select_related('story')
-                                                    .select_related('user__user_id')
-                                                    .filter(user__user_id__id=user_id)
-                                                    .values_list('story', flat=True)
-                                                    )])
+                                                            Like.objects.select_related('story')
+                                                            .select_related('user__user_id')
+                                                            .filter(user__user_id__id=user_id)
+                                                            .values_list('story', flat=True)
+                                                            )])
 
-                    selectedStoriesIdListOfcurrentUserLikes = list(all_currentuser_likes_story_id_set.intersection(
-                                                                        selected_story_id
-                                                                    ))
+                    selectedStoriesIdListOfcurrentUserLikes = list(
+                        all_currentuser_likes_story_id_set.intersection(
+                            selected_story_id
+                        )
+                    )
                                                         
                 else:
                     selectedStoriesIdListOfcurrentUserLikes = ""
 
-                return Response({'nextPage': None, 'data':serializer.data, 
-                                'selectedStoriesIdListOfcurrentUserLikes': selectedStoriesIdListOfcurrentUserLikes}, 200)
+                return Response({
+                    'nextPage': None, 
+                    'data':serializer.data, 
+                    'selectedStoriesIdListOfcurrentUserLikes': selectedStoriesIdListOfcurrentUserLikes
+                }, 200)
 
             except:
 
@@ -299,7 +336,10 @@ def get_stories_list(request):
             
         except:
 
-            return Response({'error': True, 'message': 'Failed retrieving stories of following users.'}, 200)   
+            return Response({
+                'error': True, 
+                'message': 'Failed retrieving stories of following users.'
+            }, 200)   
 
 
 
@@ -376,12 +416,20 @@ def get_comments_list(request):
         try:
 
             story = Story.objects.get(pk=story_id)
-            comments_selected = Comment.objects.select_related('story_id').filter(story_id__id=story_id).order_by('time')[offset:offset+13]
+            comments_selected = Comment.objects.select_related('story_id').filter(
+                story_id__id=story_id
+            ).order_by('time')[offset:offset+13]
+
             comments_selected_length = len(comments_selected)
             serializer = CommentSerializer(comments_selected, many=True)
 
-            comments_num = [Comment.objects.filter(comment_id=comment).aggregate(Count('id'))['id__count'] for comment in comments_selected]
-            likes_num = [Like.objects.filter(comment=comment).aggregate(Count('id'))['id__count'] for comment in comments_selected]
+            comments_num = [Comment.objects.filter(comment_id=comment).aggregate(
+                Count('id')
+            )['id__count'] for comment in comments_selected]
+
+            likes_num = [Like.objects.filter(comment=comment).aggregate(
+                Count('id')
+            )['id__count'] for comment in comments_selected]
                 
             if comments_selected_length > 12:
 
@@ -420,12 +468,17 @@ def get_comments_list(request):
 
         try:
 
-            comments_selected = Comment.objects.select_related('comment_id').filter(comment_id__id=comment_id).order_by('time')[offset:offset+13]
+            comments_selected = Comment.objects.select_related('comment_id').filter(
+                comment_id__id=comment_id
+            ).order_by('time')[offset:offset+13]
+
             comments_selected_length = len(comments_selected)
 
             serializer = CommentSerializer(comments_selected, many=True)
 
-            likes_num = [Like.objects.filter(comment=comment).aggregate(Count('id'))['id__count'] for comment in comments_selected]
+            likes_num = [Like.objects.filter(comment=comment).aggregate(
+                Count('id')
+            )['id__count'] for comment in comments_selected]
 
             if comments_selected_length > 12:
 
@@ -475,7 +528,10 @@ def get_comments_list(request):
             
         except:
 
-            return Response({'error': True, 'message': 'Failed retrieving comments of following users.'}, 200)          
+            return Response({
+                'error': True, 
+                'message': 'Failed retrieving comments of following users.'
+            }, 200)          
 
     else: 
 
@@ -579,7 +635,10 @@ def get_likes_list(request):
         try:
 
             story = Story.objects.get(pk=story_id)
-            likes_selected = Like.objects.select_related('story').filter(story__id=story_id).order_by('time')[offset:offset+13]
+            likes_selected = Like.objects.select_related('story').filter(
+                story__id=story_id
+            ).order_by('time')[offset:offset+13]
+
             likes_selected_length = len(likes_selected)
             serializer = LikeSerializer(likes_selected, many=True)
                 
@@ -614,7 +673,10 @@ def get_likes_list(request):
 
         try:
 
-            likes_selected = Like.objects.select_related('comment').filter(comment__id=comment_id).order_by('time')[offset:offset+13]
+            likes_selected = Like.objects.select_related('comment').filter(
+                comment__id=comment_id
+            ).order_by('time')[offset:offset+13]
+
             likes_selected_length = len(likes_selected)
             serializer = LikeSerializer(likes_selected, many=True)
 
@@ -647,10 +709,15 @@ def get_likes_list(request):
 
         if redis_cached_data is not None:
 
-            # data = json.loads(redis_cached_data)
+            try:
 
-            print('get user_likeslist from redis')
-            return Response({"success": True, "data": redis_cached_data}, 200)
+                data = json.loads(redis_cached_data)
+
+                print('get user_likeslist from redis')
+                return Response({"success": True, "data": data}, 200)
+            except valueError as error
+                raise
+                return Response({"error": True, "message": "Cached data is not JSON object."}, 400)
 
         else:
 
@@ -726,7 +793,11 @@ def handle_single_like(request):
 
     if request.method == 'GET':
         try:
-            like = Like.objects.select_related('story').filter(story__id=story_id).select_related('user').get(user__user_id=user_id)
+            like = Like.objects.select_related('story').filter(
+                story__id=story_id
+            ).select_related('user').get(
+                user__user_id=user_id
+            )
             serializer = LikeSerializer(like, many=False)
             return Response({"success": True, "data": serializer.data}, 200)
 
@@ -739,7 +810,11 @@ def handle_single_like(request):
         try:
             if story_id != "null":
 
-                like = Like.objects.select_related('story').filter(story__id=story_id).select_related('user').get(user__user_id=user_id)
+                like = Like.objects.select_related('story').filter(
+                    story__id=story_id
+                ).select_related('user').get(
+                    user__user_id=user_id
+                )
                 
                 like.delete()        
 
@@ -755,7 +830,11 @@ def handle_single_like(request):
 
             else:
 
-                like = Like.objects.select_related('comment').filter(comment__id=object_id).select_related('user').get(user__user_id=user_id)
+                like = Like.objects.select_related('comment').filter(
+                    comment__id=object_id
+                ).select_related('user').get(
+                    user__user_id=user_id
+                )
                 
                 like.delete()        
 
@@ -783,16 +862,18 @@ def get_follows_list(request):
 
     if redis_cached_data is not None:
 
-        # data = json.loads(redis_cached_data)
+        data = json.loads(redis_cached_data)
 
-        return Response({"success": True, "data": redis_cached_data}, 200)
+        return Response({"success": True, "data": data}, 200)
 
     else:
 
         try: 
             
             lookup = (Q(follower__username=username) | Q(following__username=username))
-            follow = Follow.objects.select_related('follower').select_related('following').filter(lookup).order_by('-time')
+            follow = Follow.objects.select_related('follower').select_related('following').filter(
+                lookup
+            ).order_by('-time')
 
             serializer = FollowSerializer(follow, many=True)
             all_data = serializer.data
