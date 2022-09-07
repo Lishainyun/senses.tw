@@ -72,8 +72,7 @@ def get_profile(request, username):
             print('data: ', data)
             print('Successfully get data from redis')
             return Response(data, 200)
-        except valueError as err:
-            raise 
+        except:
             return Response({
                 "error": True, 
                 "message": "Cached data is not JSON object."
@@ -716,8 +715,8 @@ def get_likes_list(request):
                 print('data: ', data)
                 print('get user_likeslist from redis')
                 return Response({"success": True, "data": data}, 200)
-            except valueError as error
-                raise
+            except:
+
                 return Response({"error": True, "message": "Cached data is not JSON object."}, 400)
 
         else:
