@@ -732,7 +732,7 @@ def get_likes_list(request):
                 print('line 732 likes_list data: ', json.dumps(data))
 
                 user_likeslist_key = f'{user_id}_likeslist'
-                redis_client.set(user_likeslist_key, data)
+                redis_client.set(user_likeslist_key, json.dumps(data))
                 redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
                 return Response({"success": True, "data": json.dumps(data)}, 200)
