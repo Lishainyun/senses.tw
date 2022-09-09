@@ -727,7 +727,7 @@ def get_likes_list(request):
                 likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
                 serializer = LikeSerializer(likes, many=True)
                 data = serializer.data
-                print('line 732 likes_list data: ', data)
+                print('line 732 likes_list data: ', dict(data))
 
                 user_likeslist_key = f'{user_id}_likeslist'
                 redis_client.set(user_likeslist_key, data)
