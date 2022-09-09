@@ -718,7 +718,7 @@ def get_likes_list(request):
         if redis_cached_data is not None:
 
             try:
-                return Response({"success": True, "data": redis_cached_data}, 200)
+                return Response({"success": True, "data": json.loads(redis_cached_data)}, 200)
             except:
                 return Response({"error": True, "message": "Cached data is not JSON object."}, 400)
 
