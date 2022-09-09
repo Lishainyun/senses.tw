@@ -72,9 +72,8 @@ def get_profile(request, username):
 
     if redis_cached_data is not None:
         try:
-            redis_cached_data = redis_client.json().get(profile_key)
 
-            print('line 73 profile_redis_data: ', redis_cached_data)
+            print('line 73 profile_redis_data: ', json.loads(redis_cached_data))
 
             return Response(redis_cached_data, 200)
         except:
