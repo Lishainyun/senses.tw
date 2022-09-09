@@ -735,7 +735,7 @@ def get_likes_list(request):
                 redis_client.set(user_likeslist_key, data)
                 redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
-                return Response({"success": True, "data": data}, 200)
+                return Response({"success": True, "data": json.dumps(data)}, 200)
 
             
             except ObjectDoesNotExist:
@@ -870,8 +870,6 @@ def get_follows_list(request):
 
 
     if redis_cached_data is not None:
-        redis_cached_data = redis_client.json().get(follows_key)
-
         return Response({"success": True, "data": redis_cached_data}, 200)
     else:
 
