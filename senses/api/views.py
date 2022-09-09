@@ -89,7 +89,7 @@ def get_profile(request, username):
             print('line 89 profile data: ', data)
 
             # cache
-            redis_client.json().set(profile_key, Path.root_path(), data)
+            redis_client.set(profile_key, json.dumps(data))
             redis_client.expire(profile_key, datetime.timedelta(days=1))
             print('Successfully set data into redis')
             
@@ -162,7 +162,7 @@ def edit_profile(request):
 
         # cache
         profile_key = f'{username}_profile'
-        redis_client.json().set(profile_key, Path.root_path(), data)
+        redis_client.set(profile_key, json.dumps(data))
         redis_client.expire(profile_key, datetime.timedelta(days=1))
 
         return Response({'success': True, 'data': data}, 200)
@@ -716,8 +716,6 @@ def get_likes_list(request):
         if redis_cached_data is not None:
 
             try:
-                redis_cached_data = redis_client.json().get(user_likeslist_key)
-
                 return Response({"success": True, "data": redis_cached_data}, 200)
             except:
                 return Response({"error": True, "message": "Cached data is not JSON object."}, 400)
@@ -732,7 +730,7 @@ def get_likes_list(request):
                 print('line 732 likes_list data: ', data)
 
                 user_likeslist_key = f'{user_id}_likeslist'
-                redis_client.json().set(user_likeslist_key, Path.root_path(), data)
+                redis_client.set(user_likeslist_key, data)
                 redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
                 return Response({"success": True, "data": data}, 200)
@@ -778,7 +776,7 @@ def add_like(request):
         print('line 778 likes data: ', data)
 
         user_likeslist_key = f'{user_id}_likeslist'
-        redis_client.json().set(user_likeslist_key, Path.root_path(), likes_data)
+        redis_client.set(user_likeslist_key, json.dumps(likes_data))
         redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
         success = {"success": True, "message": "Add like successfully.", "data": data}
@@ -829,7 +827,7 @@ def handle_single_like(request):
                 print('line 829 likes data: ', data)
 
                 user_likeslist_key = f'{user_id}_likeslist'
-                redis_client.json().set(user_likeslist_key, Path.root_path(), data)
+                redis_client.set(user_likeslist_key, json.dumps(data))
                 redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
                 return Response({"success": True, "message": "Delete like successfully."}, 200)
@@ -850,7 +848,7 @@ def handle_single_like(request):
                 print('line 850 likes data: ', data)
 
                 user_likeslist_key = f'{user_id}_likeslist'
-                redis_client.json().set(user_likeslist_key, Path.root_path(), data)
+                redis_client.set(user_likeslist_key, json.dumps(data))
                 redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))  
 
                 return Response({"success": True, "message": "Delete like successfully."}, 200)
@@ -905,7 +903,7 @@ def get_follows_list(request):
             
             # cache
             follows_key = f'{username}_follows'
-            redis_client.json().set(follows_key, Path.root_path(), data)
+            redis_client.set(follows_key, json.dumps(data))
             redis_client.expire(follows_key, datetime.timedelta(days=1))
             
             return Response({"success": True, "data": data}, 200)
