@@ -28,9 +28,10 @@ from .serializers import (
 
 from senses.settings import SECRET_KEY
 from . import utils
+from redis.commands.json.path import Path
 
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
-redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0, password=REDIS_PASSWORD)
+redis_client = redis.Redis(host='localhost', port=6379, db=0, password=REDIS_PASSWORD)
 
 @api_view(['GET'])
 def get_users_list(request):
@@ -64,14 +65,11 @@ def get_user(request, pk):
 def get_profile(request, username):
     
     profile_key = f'{username}_profile'
-    redis_cached_data = redis_client.get(profile_key)
+    redis_cached_data = redis_client.json().get(profile_key)
 
     if redis_cached_data is not None:
         try:
-            data = json.loads(redis_cached_data)
-            print('data: ', data)
-            print('Successfully get data from redis')
-            return Response(data, 200)
+            return Response(redis_cached_data, 200)
         except:
             return Response({
                 "error": True, 
@@ -85,7 +83,7 @@ def get_profile(request, username):
             data = serializer.data
 
             # cache
-            redis_client.set(profile_key, json.dumps(data))
+            redis_client.json().set(profile_key, Path.root_path(), json.dumps(data))
             redis_client.expire(profile_key, datetime.timedelta(days=1))
             print('Successfully set data into redis')
             
@@ -157,7 +155,7 @@ def edit_profile(request):
 
         # cache
         profile_key = f'{username}_profile'
-        redis_client.set(profile_key, json.dumps(data))
+        redis_client.json().set(profile_key, Path.root_path().json.dumps(data))
         redis_client.expire(profile_key, datetime.timedelta(days=1))
 
         return Response({'success': True, 'data': data}, 200)
@@ -705,18 +703,13 @@ def get_likes_list(request):
     elif user_id: 
 
         user_likeslist_key = f'{user_id}_likeslist'
-        redis_cached_data = redis_client.get(user_likeslist_key)
+        redis_cached_data = redis_client.json().get(user_likeslist_key)
 
         if redis_cached_data is not None:
 
             try:
-
-                data = json.loads(redis_cached_data)
-                print('data: ', data)
-                print('get user_likeslist from redis')
-                return Response({"success": True, "data": data}, 200)
+                return Response({"success": True, "data": redis_cached_data}, 200)
             except:
-
                 return Response({"error": True, "message": "Cached data is not JSON object."}, 400)
 
         else:
@@ -728,7 +721,7 @@ def get_likes_list(request):
                 data = serializer.data
 
                 user_likeslist_key = f'{user_id}_likeslist'
-                redis_client.set(user_likeslist_key, json.dumps(data))
+                redis_client.json().set(user_likeslist_key, Path.root_path(), json.dumps(data))
                 redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
                 return Response({"success": True, "data": data}, 200)
@@ -773,7 +766,7 @@ def add_like(request):
         likes_data = likes_serializer.data
 
         user_likeslist_key = f'{user_id}_likeslist'
-        redis_client.set(user_likeslist_key, json.dumps(likes_data))
+        redis_client.json().set(user_likeslist_key, Path.root_path(), json.dumps(likes_data))
         redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
         success = {"success": True, "message": "Add like successfully.", "data": data}
@@ -823,7 +816,7 @@ def handle_single_like(request):
                 data = serializer.data
 
                 user_likeslist_key = f'{user_id}_likeslist'
-                redis_client.set(user_likeslist_key, json.dumps(data))
+                redis_client.json().set(user_likeslist_key, Path.root_path(), json.dumps(data))
                 redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
                 return Response({"success": True, "message": "Delete like successfully."}, 200)
@@ -843,7 +836,7 @@ def handle_single_like(request):
                 data = serializer.data
 
                 user_likeslist_key = f'{user_id}_likeslist'
-                redis_client.set(user_likeslist_key, json.dumps(data))
+                redis_client.json().set(user_likeslist_key, Path.root_path, json.dumps(data))
                 redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))  
 
                 return Response({"success": True, "message": "Delete like successfully."}, 200)
@@ -858,14 +851,10 @@ def get_follows_list(request):
     username = request.GET.get('user')
 
     follows_key = f'{username}_follows'
-    redis_cached_data = redis_client.get(follows_key)
+    redis_cached_data = redis_client.json().get(follows_key)
 
     if redis_cached_data is not None:
-
-        data = json.loads(redis_cached_data)
-
-        return Response({"success": True, "data": data}, 200)
-
+        return Response({"success": True, "data": redis_cached_data}, 200)
     else:
 
         try: 
@@ -897,7 +886,7 @@ def get_follows_list(request):
             
             # cache
             follows_key = f'{username}_follows'
-            redis_client.set(follows_key, json.dumps(data))
+            redis_client.json().set(follows_key, Path.root_path(), json.dumps(data))
             redis_client.expire(follows_key, datetime.timedelta(days=1))
             
             return Response({"success": True, "data": data}, 200)
