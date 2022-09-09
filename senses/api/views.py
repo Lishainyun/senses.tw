@@ -66,9 +66,12 @@ def get_profile(request, username):
     
     profile_key = f'{username}_profile'
     redis_cached_data = redis_client.json().get(profile_key)
+    print('line 69 profile_redis_data: ', redis_cached_data)
 
     if redis_cached_data is not None:
         try:
+            print('line 73 profile_redis_data: ', redis_cached_data)
+
             return Response(redis_cached_data, 200)
         except:
             return Response({
@@ -704,6 +707,7 @@ def get_likes_list(request):
 
         user_likeslist_key = f'{user_id}_likeslist'
         redis_cached_data = redis_client.json().get(user_likeslist_key)
+        print('line 710 likeslist_redis_data: ', redis_cached_data)
 
         if redis_cached_data is not None:
 
@@ -852,6 +856,8 @@ def get_follows_list(request):
 
     follows_key = f'{username}_follows'
     redis_cached_data = redis_client.json().get(follows_key)
+    print('line 859 followslist_redis_data: ', redis_cached_data)
+
 
     if redis_cached_data is not None:
         return Response({"success": True, "data": redis_cached_data}, 200)
