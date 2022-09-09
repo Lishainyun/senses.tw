@@ -15,7 +15,9 @@ from redis.commands.json.path import Path
 
 
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
-redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0, password=REDIS_PASSWORD)
+redis_client = redis.StrictRedis(host='127.0.0.1', port=6379, 
+                                charset="utf-8", db=0, 
+                                password=REDIS_PASSWORD, decode_responses=True)
 
 def follows_list(follower, following):
 
@@ -60,7 +62,6 @@ def follows_list(follower, following):
     follows_key = f'{follower}_follows'
     redis_client.set(follows_key, json.dumps(follower_data))
     redis_client.expire(follows_key, datetime.timedelta(days=1))
-    print('follows_key: ', follows_key)
 
     # following's
 
@@ -104,8 +105,6 @@ def follows_list(follower, following):
     follows_key = f'{following}_follows'
     redis_client.set(follows_key, json.dumps(following_data))
     redis_client.expire(follows_key, datetime.timedelta(days=1))
-
-    print('follows_key: ', follows_key)
 
 
 def unfollow(follower, following, username):

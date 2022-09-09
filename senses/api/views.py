@@ -68,14 +68,10 @@ def get_profile(request, username):
     
     profile_key = f'{username}_profile'
     redis_cached_data = redis_client.get(profile_key)
-    print('line 69 profile_redis_data: ', redis_cached_data)
 
     if redis_cached_data is not None:
         try:
-
-            print('line 73 profile_redis_data: ', json.loads(redis_cached_data))
-
-            return Response(redis_cached_data, 200)
+            return Response(json.loads(redis_cached_data), 200)
         except:
             return Response({
                 "error": True, 
@@ -87,12 +83,10 @@ def get_profile(request, username):
             profile = Profile.objects.get(username=username)
             serializer = ProfileSerializer(profile, many=False)
             data = serializer.data
-            print('line 89 profile data: ', data)
 
             # cache
             redis_client.set(profile_key, json.dumps(data))
             redis_client.expire(profile_key, datetime.timedelta(days=1))
-            print('Successfully set data into redis')
             
             return Response(data, 200)
 
@@ -159,7 +153,6 @@ def edit_profile(request):
 
         serializer = ProfileSerializer(profile, many=False)
         data = serializer.data
-        print('line 161 edit_profile data: ', data)
 
         # cache
         profile_key = f'{username}_profile'
@@ -193,7 +186,6 @@ def add_story(request):
 
         if len(images) != 0:
             for image in images:
-                print(image, story, time)
                 img = Story_Photo.objects.create(story=story, url=image, time=time)
                 
         success = {
@@ -712,7 +704,6 @@ def get_likes_list(request):
 
         user_likeslist_key = f'{user_id}_likeslist'
         redis_cached_data = redis_client.get(user_likeslist_key)
-        print('line 710 likeslist_redis_data: ', redis_cached_data)
 
         if redis_cached_data is not None:
 
@@ -728,7 +719,6 @@ def get_likes_list(request):
                 likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
                 serializer = LikeSerializer(likes, many=True)
                 data = serializer.data
-                print('line 732 likes_list data: ', json.dumps(data))
 
                 user_likeslist_key = f'{user_id}_likeslist'
                 redis_client.set(user_likeslist_key, json.dumps(data))
@@ -774,7 +764,6 @@ def add_like(request):
         likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
         likes_serializer = LikeSerializer(likes, many=True)
         likes_data = likes_serializer.data
-        print('line 778 likes data: ', data)
 
         user_likeslist_key = f'{user_id}_likeslist'
         redis_client.set(user_likeslist_key, json.dumps(likes_data))
@@ -825,7 +814,6 @@ def handle_single_like(request):
                 likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
                 serializer = LikeSerializer(likes, many=True)
                 data = serializer.data
-                print('line 829 likes data: ', data)
 
                 user_likeslist_key = f'{user_id}_likeslist'
                 redis_client.set(user_likeslist_key, json.dumps(data))
@@ -846,7 +834,6 @@ def handle_single_like(request):
                 likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
                 serializer = LikeSerializer(likes, many=True)
                 data = serializer.data
-                print('line 850 likes data: ', data)
 
                 user_likeslist_key = f'{user_id}_likeslist'
                 redis_client.set(user_likeslist_key, json.dumps(data))
@@ -865,8 +852,6 @@ def get_follows_list(request):
 
     follows_key = f'{username}_follows'
     redis_cached_data = redis_client.get(follows_key)
-    print('line 859 followslist_redis_data: ', redis_cached_data)
-
 
     if redis_cached_data is not None:
         return Response({"success": True, "data": json.loads(redis_cached_data)}, 200)
@@ -898,7 +883,6 @@ def get_follows_list(request):
                     "length": following_list_length,
                 },
             }
-            print('line 898 follows data: ', data)
             
             # cache
             follows_key = f'{username}_follows'
@@ -923,8 +907,6 @@ def add_follow(request):
     time = datetime.datetime.now()
 
     try:
-
-        print('add_follow: ', follower, following)
 
         follow = Follow.objects.create(
             time=time,
