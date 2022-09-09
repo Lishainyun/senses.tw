@@ -31,7 +31,9 @@ from . import utils
 from redis.commands.json.path import Path
 
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
-redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0, password=REDIS_PASSWORD)
+redis_client = redis.StrictRedis(host='127.0.0.1', port=6379, 
+                                charset="utf-8", db=0, 
+                                password=REDIS_PASSWORD, decode_responses=True)
 
 @api_view(['GET'])
 def get_users_list(request):
@@ -727,7 +729,7 @@ def get_likes_list(request):
                 likes = Like.objects.select_related('user').filter(user__user_id=int(user_id))
                 serializer = LikeSerializer(likes, many=True)
                 data = serializer.data
-                print('line 732 likes_list data: ', dict(data))
+                print('line 732 likes_list data: ', json.dumps(data))
 
                 user_likeslist_key = f'{user_id}_likeslist'
                 redis_client.set(user_likeslist_key, data)
