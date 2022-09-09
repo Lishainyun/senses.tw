@@ -58,7 +58,7 @@ def follows_list(follower, following):
     
     # cache
     follows_key = f'{follower}_follows'
-    redis_client.json().set(follows_key, Path.root_path().json.dumps(follower_data))
+    redis_client.json().set(follows_key, Path.root_path(), follower_data)
     redis_client.expire(follows_key, datetime.timedelta(days=1))
     print('follows_key: ', follows_key)
 
@@ -102,7 +102,7 @@ def follows_list(follower, following):
     
     # cache
     follows_key = f'{following}_follows'
-    redis_client.json().set(follows_key, Path.root_path(), json.dumps(following_data))
+    redis_client.json().set(follows_key, Path.root_path(), following_data)
     redis_client.expire(follows_key, datetime.timedelta(days=1))
 
     print('follows_key: ', follows_key)

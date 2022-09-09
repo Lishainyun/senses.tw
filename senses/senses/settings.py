@@ -15,11 +15,11 @@ load_dotenv('.env')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [ 'www.senses.tw', '44.199.90.64']
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# ALLOWED_HOSTS = [ 'www.senses.tw', '44.199.90.64']
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
 
 # Application definition
 

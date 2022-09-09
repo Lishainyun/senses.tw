@@ -88,7 +88,7 @@ def get_profile(request, username):
             data = serializer.data
 
             # cache
-            redis_client.json().set(profile_key, Path.root_path(), json.dumps(data))
+            redis_client.json().set(profile_key, Path.root_path(), data)
             redis_client.expire(profile_key, datetime.timedelta(days=1))
             print('Successfully set data into redis')
             
@@ -160,7 +160,7 @@ def edit_profile(request):
 
         # cache
         profile_key = f'{username}_profile'
-        redis_client.json().set(profile_key, Path.root_path().json.dumps(data))
+        redis_client.json().set(profile_key, Path.root_path(), data)
         redis_client.expire(profile_key, datetime.timedelta(days=1))
 
         return Response({'success': True, 'data': data}, 200)
@@ -729,7 +729,7 @@ def get_likes_list(request):
                 data = serializer.data
 
                 user_likeslist_key = f'{user_id}_likeslist'
-                redis_client.json().set(user_likeslist_key, Path.root_path(), json.dumps(data))
+                redis_client.json().set(user_likeslist_key, Path.root_path(), data)
                 redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
                 return Response({"success": True, "data": data}, 200)
@@ -774,7 +774,7 @@ def add_like(request):
         likes_data = likes_serializer.data
 
         user_likeslist_key = f'{user_id}_likeslist'
-        redis_client.json().set(user_likeslist_key, Path.root_path(), json.dumps(likes_data))
+        redis_client.json().set(user_likeslist_key, Path.root_path(), likes_data)
         redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
         success = {"success": True, "message": "Add like successfully.", "data": data}
@@ -824,7 +824,7 @@ def handle_single_like(request):
                 data = serializer.data
 
                 user_likeslist_key = f'{user_id}_likeslist'
-                redis_client.json().set(user_likeslist_key, Path.root_path(), json.dumps(data))
+                redis_client.json().set(user_likeslist_key, Path.root_path(), data)
                 redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))
 
                 return Response({"success": True, "message": "Delete like successfully."}, 200)
@@ -844,7 +844,7 @@ def handle_single_like(request):
                 data = serializer.data
 
                 user_likeslist_key = f'{user_id}_likeslist'
-                redis_client.json().set(user_likeslist_key, Path.root_path, json.dumps(data))
+                redis_client.json().set(user_likeslist_key, Path.root_path(), data)
                 redis_client.expire(user_likeslist_key, datetime.timedelta(days=1))  
 
                 return Response({"success": True, "message": "Delete like successfully."}, 200)
@@ -898,7 +898,7 @@ def get_follows_list(request):
             
             # cache
             follows_key = f'{username}_follows'
-            redis_client.json().set(follows_key, Path.root_path(), json.dumps(data))
+            redis_client.json().set(follows_key, Path.root_path(), data)
             redis_client.expire(follows_key, datetime.timedelta(days=1))
             
             return Response({"success": True, "data": data}, 200)
