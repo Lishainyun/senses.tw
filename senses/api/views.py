@@ -31,7 +31,7 @@ from . import utils
 from redis.commands.json.path import Path
 
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
-redis_client = redis.Redis(host='localhost', port=6379, db=0, password=REDIS_PASSWORD)
+redis_client = redis.Redis(host='127.0.0.1', port=6379, db=0, password=REDIS_PASSWORD)
 
 @api_view(['GET'])
 def get_users_list(request):
